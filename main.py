@@ -15,7 +15,7 @@ FEATURES = {
     "c": "Learn a new skill",
     "d": "Go to Navigation Links",
     "e": "Show My Network",
-    "f": "Check Pending Friend Requests"
+    "f": "Check Pending Friend Requests",
 }
 
 JOB_OPTIONS = {
@@ -195,10 +195,10 @@ def reached_user_limit(num_users):
 def validate_password(input_p):
     """Check if password meets requirements"""
     if not (
-            8 <= len(input_p) <= 12
-            and any(char.isupper() for char in input_p)
-            and any(char.isdigit() for char in input_p)
-            and any(char in string.punctuation for char in input_p)
+        8 <= len(input_p) <= 12
+        and any(char.isupper() for char in input_p)
+        and any(char.isdigit() for char in input_p)
+        and any(char in string.punctuation for char in input_p)
     ):
         print("Password does not meet requirements, please try again")
         return None
@@ -336,11 +336,11 @@ def last_name_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users with the last name {friend_lastname}")
-        print(
-            f"\n{friend_username}"
-        )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
@@ -361,19 +361,17 @@ def university_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users attending {friend_university}")
-        print(
-            f"\n{friend_username}"
-        )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
                 choose_features(username)
     else:
-        print(
-            f"\nThere are no users that attend {friend_university} on inCollege."
-        )
+        print(f"\nThere are no users that attend {friend_university} on inCollege.")
 
 
 def major_search(username):
@@ -385,12 +383,14 @@ def major_search(username):
     friend_username = get_username_from_major(friend_major)
 
     if friend_username != False:
-        print(f"\nPrinting usernames of users who are taking this major: {friend_major}")
         print(
-            f"\n{friend_username}"
+            f"\nPrinting usernames of users who are taking this major: {friend_major}"
         )
-        choice = input("Do you want to request to connect with someone from this list? y/n?: ").lower()
-        if choice == 'y':
+        print(f"\n{friend_username}")
+        choice = input(
+            "Do you want to request to connect with someone from this list? y/n?: "
+        ).lower()
+        if choice == "y":
             send_friend_request(username)
         else:
             if go_back():
@@ -717,12 +717,14 @@ def check_friend_request(username):
         print("\nWhat would you like to do with these requests?")
         for key, value in FRIEND_REQUEST.items():
             print(f"{key}. {value}")
-        friend_request_choice = input(f"Choose one of {list(FRIEND_REQUEST.keys())}: ").strip().lower()
+        friend_request_choice = (
+            input(f"Choose one of {list(FRIEND_REQUEST.keys())}: ").strip().lower()
+        )
 
-        if friend_request_choice == 'a':
+        if friend_request_choice == "a":
             accept_friend_request(username)
             choose_features(username)
-        if friend_request_choice == 'r':
+        if friend_request_choice == "r":
             reject_friend_request(username)
             choose_features(username)
         elif friend_request_choice == "b":
