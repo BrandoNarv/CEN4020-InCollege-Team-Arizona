@@ -385,7 +385,7 @@ def last_name_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users with the last name {friend_lastname}")
-        print(f"\n{friend_username}")
+        print(f"\n{', '.join(friend_username)}")
         choice = input(
             "Do you want to request to connect with someone from this list? y/n?: "
         ).lower()
@@ -410,7 +410,7 @@ def university_search(username):
 
     if friend_username != False:
         print(f"\nPrinting usernames of users attending {friend_university}")
-        print(f"\n{friend_username}")
+        print(f"\n{', '.join(friend_username)}")
         choice = input(
             "Do you want to request to connect with someone from this list? y/n?: "
         ).lower()
@@ -435,7 +435,7 @@ def major_search(username):
         print(
             f"\nPrinting usernames of users who are taking this major: {friend_major}"
         )
-        print(f"\n{friend_username}")
+        print(f"\n{', '.join(friend_username)}")
         choice = input(
             "Do you want to request to connect with someone from this list? y/n?: "
         ).lower()
