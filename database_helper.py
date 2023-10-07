@@ -57,8 +57,14 @@ def create_user(username, password, first, last, university, major):
             # Insert username, password, first name, and last name into database
             c.execute(
                 "INSERT INTO accounts VALUES (:user, :pass, :first, :last, :university, :major)",
-                {"user": username, "pass": password, "first": first, "last": last, "university": university,
-                 "major": major},
+                {
+                    "user": username,
+                    "pass": password,
+                    "first": first,
+                    "last": last,
+                    "university": university,
+                    "major": major,
+                },
             )
         return True
     except sqlite3.Error as error:
@@ -71,8 +77,7 @@ def delete_user(username):
     try:
         with conn:
             # Delete the user with the provided username
-            c.execute(
-                "DELETE FROM accounts WHERE user = ?", (username,))
+            c.execute("DELETE FROM accounts WHERE user = ?", (username,))
         return True
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
@@ -93,8 +98,15 @@ def create_job(title, description, employer, location, salary, first, last):
             # Insert username, password, first name, and last name into database
             c.execute(
                 "INSERT INTO jobs VALUES (:title, :description, :employer, :location,:salary, :first, :last)",
-                {"title": title, "description": description, "employer": employer,
-                 "location": location, "salary": salary, "first": first, "last": last},
+                {
+                    "title": title,
+                    "description": description,
+                    "employer": employer,
+                    "location": location,
+                    "salary": salary,
+                    "first": first,
+                    "last": last,
+                },
             )
         return True
     except sqlite3.Error as error:
@@ -118,8 +130,10 @@ def add_friend(username, friend_username):
     """Returns True if the friend was successfully added into the database, False otherwise"""
     try:
         with conn:
-            c.execute("INSERT INTO friends VALUES (:user, :friend_user)",
-                      {"user": username, "friend_user": friend_username})
+            c.execute(
+                "INSERT INTO friends VALUES (:user, :friend_user)",
+                {"user": username, "friend_user": friend_username},
+            )
         return True
     except sqlite3.Error as error:
         print("Failed to add friend to the sqlite table:", error)
@@ -128,8 +142,10 @@ def add_friend(username, friend_username):
 
 def search_name(firstname, lastname):
     """Returns True if the username already exists in the database, False otherwise"""
-    c.execute("SELECT * FROM accounts WHERE first=:first AND last=:last",
-              {"first": firstname, "last": lastname})
+    c.execute(
+        "SELECT * FROM accounts WHERE first=:first AND last=:last",
+        {"first": firstname, "last": lastname},
+    )
     user_entry = c.fetchone()
     return user_entry is not None
 
@@ -147,7 +163,8 @@ def get_username_from_last_name(lastname):
 def get_username_from_university(university):
     """Returns a list of username if found with the friend's university in the database, an empty list otherwise"""
     c.execute(
-        "SELECT user FROM accounts WHERE university=:university", {"university": university}
+        "SELECT user FROM accounts WHERE university=:university",
+        {"university": university},
     )
     users = c.fetchall()
     if users:
@@ -212,8 +229,10 @@ def get_num_of_jobs():
 
 def does_friend_request_match(username, friend_username):
     """Returns friend username if the username already exists in the friends, False otherwise"""
-    c.execute("SELECT * FROM friends WHERE user=:user AND friend_user=:friend_user",
-              {"user": friend_username, "friend_user": username})
+    c.execute(
+        "SELECT * FROM friends WHERE user=:user AND friend_user=:friend_user",
+        {"user": friend_username, "friend_user": username},
+    )
     user_entry = c.fetchone()
     if user_entry:
         return True
@@ -223,7 +242,10 @@ def does_friend_request_match(username, friend_username):
 
 def pending_friend_request_list(username):
     """Returns friend username if the username already exists in the friends, False otherwise"""
-    c.execute("SELECT * FROM friends WHERE friend_user=:friend_user", {"friend_user": username})
+    c.execute(
+        "SELECT * FROM friends WHERE friend_user=:friend_user",
+        {"friend_user": username},
+    )
     user_entry = c.fetchall()
 
     if user_entry:
@@ -236,10 +258,14 @@ def add_to_friend_list(username, friend_username):
     """Returns True if the friend was successfully added into the database, False otherwise"""
     try:
         with conn:
-            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
-                      {"user": username, "friend_user": friend_username})
-            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
-                      {"user": friend_username, "friend_user": username})
+            c.execute(
+                "INSERT INTO friends_list VALUES (:user, :friend_user)",
+                {"user": username, "friend_user": friend_username},
+            )
+            c.execute(
+                "INSERT INTO friends_list VALUES (:user, :friend_user)",
+                {"user": friend_username, "friend_user": username},
+            )
         return True
     except sqlite3.Error as error:
         print("Failed to add friend to the sqlite table:", error)
@@ -252,7 +278,12 @@ def delete_friend_request(username, friend_username):
         with conn:
             # Delete the friend with the provided username
             c.execute(
-                "DELETE FROM friends WHERE user = ? AND friend_user = ?", (friend_username, username,))
+                "DELETE FROM friends WHERE user = ? AND friend_user = ?",
+                (
+                    friend_username,
+                    username,
+                ),
+            )
         return True
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
@@ -261,7 +292,7 @@ def delete_friend_request(username, friend_username):
 
 def list_of_friends(username):
     """Returns friend username if the username already exists in the friends, False otherwise"""
-    c.execute("SELECT * FROM friends_list WHERE user=:user", {"user": username});
+    c.execute("SELECT * FROM friends_list WHERE user=:user", {"user": username})
     user_entry = c.fetchall()
 
     if user_entry:
@@ -272,8 +303,10 @@ def list_of_friends(username):
 
 def does_friend_match(username, friend_username):
     """Returns friend username if the username already exists in the friends, False otherwise"""
-    c.execute("SELECT * FROM friends_list WHERE user=:user AND friend_user=:friend_user",
-              {"user": username, "friend_user": friend_username})
+    c.execute(
+        "SELECT * FROM friends_list WHERE user=:user AND friend_user=:friend_user",
+        {"user": username, "friend_user": friend_username},
+    )
     user_entry = c.fetchone()
     if user_entry:
         return True
@@ -287,12 +320,20 @@ def delete_friend_from_list(username, friend_username):
         with conn:
             # Delete the friend with the provided username
             c.execute(
-                "DELETE FROM friends_list WHERE user = ? AND friend_user = ?", (friend_username, username,))
+                "DELETE FROM friends_list WHERE user = ? AND friend_user = ?",
+                (
+                    friend_username,
+                    username,
+                ),
+            )
             c.execute(
-                "DELETE FROM friends_list WHERE user = ? AND friend_user = ?", (username, friend_username,))
+                "DELETE FROM friends_list WHERE user = ? AND friend_user = ?",
+                (
+                    username,
+                    friend_username,
+                ),
+            )
         return True
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
         return False
-
-
