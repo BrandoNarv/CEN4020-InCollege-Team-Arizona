@@ -135,33 +135,35 @@ def search_name(firstname, lastname):
 
 
 def get_username_from_last_name(lastname):
-    """Returns the username is found with friend's last name in the database, False otherwise"""
-    c.execute("SELECT * FROM accounts WHERE last=:last", {"last": lastname})
-    user_entry = c.fetchone()
-    if user_entry:
-        return user_entry[0]
+    """Returns a list of usernames if found with the friend's last name in the database, an empty list otherwise"""
+    c.execute("SELECT user FROM accounts WHERE last=:last", {"last": lastname})
+    users = c.fetchall()
+    if users:
+        return [user[0] for user in users]
     else:
-        return False
+        return []
 
 
 def get_username_from_university(university):
-    """Returns the username is found with friend's university in the database, False otherwise"""
-    c.execute("SELECT * FROM accounts WHERE university=:university", {"last": university})
-    user_entry = c.fetchone()
-    if user_entry:
-        return user_entry[0]
+    """Returns a list of username if found with the friend's university in the database, an empty list otherwise"""
+    c.execute(
+        "SELECT user FROM accounts WHERE university=:university", {"university": university}
+    )
+    users = c.fetchall()
+    if users:
+        return [user[0] for user in users]
     else:
-        return False
+        return []
 
 
 def get_username_from_major(major):
-    """Returns the username is found with friend's major in the database, False otherwise"""
-    c.execute("SELECT * FROM accounts WHERE major=:major", {"major": major})
-    user_entry = c.fetchone()
-    if user_entry:
-        return user_entry[0]
+    """Returns a list of username if found with the friend's major in the database, an empty list otherwise"""
+    c.execute("SELECT user FROM accounts WHERE major=:major", {"major": major})
+    users = c.fetchall()
+    if users:
+        return [user[0] for user in users]
     else:
-        return False
+        return []
 
 
 def get_first_name(username):
