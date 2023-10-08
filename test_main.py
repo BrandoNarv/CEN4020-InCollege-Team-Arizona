@@ -1156,3 +1156,50 @@ def test_turn_off_ads(monkeypatch, capsys):
 
 
 "///////////////////////   Epic $4   //////////////////////////////////////////////"
+
+def test_friends_list_initially_empty():
+
+    # Create a new user
+    username = 'test_user'
+    password = 'password123' 
+    create_user(username, password, 'John', 'Doe', 'Test University', 'Computer Science')
+
+    # Check that new user has empty friends list
+    friends = list_of_friends(username)
+    assert friends == False
+
+    # Clean up test user
+    delete_user(username)
+
+def test_find_someone_you_know():
+    
+    # Create some test users
+    create_user('alice', 'pw123', 'Alice', 'Smith', 'State U', 'Computer Science')
+    create_user('bob', 'pw456', 'Bob', 'Jones', 'State U', 'Biology')  
+
+    logged_in_user = 'charlie'
+
+    # Search by last name
+    results = get_username_from_last_name('Smith') 
+    assert results == ['alice']
+
+    # Search by university
+    results = get_username_from_university('State U')
+    assert set(results) == {'alice', 'bob'} 
+
+    # Search by major 
+    results = get_username_from_major('Computer Science')
+    assert results == ['alice']
+
+    # Send connection request
+    add_friend(logged_in_user, 'alice')  
+
+    # Verify request was sent
+    request = pending_friend_request_list('alice')
+    assert any(logged_in_user in req for req in request)
+
+
+    # Clean up test users
+    delete_user('alice')
+    delete_user('bob') 
+    delete_user('charlie')
