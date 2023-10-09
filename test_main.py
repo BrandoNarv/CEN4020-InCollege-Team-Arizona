@@ -1155,7 +1155,316 @@ def test_turn_off_ads(monkeypatch, capsys):
   assert change == 0
 
 
-"///////////////////////   Epic $4   //////////////////////////////////////////////"
+"///////////////////////   Epic #4   //////////////////////////////////////////////"
+
+# Helper function to make a friend request
+def friend_request_helper(monkeypatch,capsys): 
+
+    # Perform mock friend request
+    monkeypatch.setattr("builtins.input", mock_send_friend_request_input)
+
+    # Start from friend request function
+    send_friend_request("TestFriend")
+
+# Helper function to accept friend request
+def accept_friend_request_helper(monkeypatch,capsys): 
+
+    # Perform mock accepting friend request
+    monkeypatch.setattr("builtins.input", mock_accept_request_input)
+
+    # Start from friend request function
+    check_friend_request("TestUser")
+
+
+# Helper function to accept friend request
+def delete_friend_request_helper(monkeypatch,capsys): 
+
+    # Perform mock accepting friend request
+    monkeypatch.setattr("builtins.input", mock_delete_request_input)
+
+    # Start from friend request function
+    check_friend_request("TestUser")
+
+
+# Mocks quiting the program if network has no friends
+def mock_quit_from_network_input_V1(prompt):
+  if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    return "a"
+
+  if "Choose one of ['a', 'b']:" in prompt:
+    return "b"
+    
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Mocks quiting the program if you don't remove friends
+def mock_quit_from_network_input_V2(prompt):
+  if "Would you like to disconnect from one of these friends? (y/n):" in prompt:
+    return "n"
+    
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Mocks quiting the program if you remove a friend
+def mock_quit_from_network_input_V3(prompt):
+  if "Would you like to disconnect from one of these friends? (y/n):" in prompt:
+    return "y"
+    
+  if "Which user would you like to delete?" in prompt:
+    return "TestFriend"
+
+  if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    return "a"
+
+  if "Choose one of ['a', 'b']:" in prompt:
+    return "b"
+    
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Mocks sending a friend request and then quit
+def mock_send_friend_request_input(prompt):
+  if "Enter the username of the user you want to connect with: " in prompt:
+    return "TestUser"
+
+# Mocks leaving from the pending friend request menu and then quit
+def mock_quit_Friend_request_input(prompt):
+  if "Choose one of ['a', 'r', 'b']: " in prompt:
+    return "b" 
+
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Mocks leaving from the pending friend request menu and then quit
+def mock_accept_request_input(prompt):
+  if "Choose one of ['a', 'r', 'b']: " in prompt:
+    return "a" 
+
+  if "Which user would you like to add?" in prompt:
+    return "TestFriend"
+
+  if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    return "a"
+
+  if "Choose one of ['a', 'b']:" in prompt:
+    return "b"
+    
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Mocks rejecting a friend request and then quit
+def mock_delete_request_input(prompt):
+  if "Choose one of ['a', 'r', 'b']: " in prompt:
+    return "r" 
+    
+  if "Which user would you like to reject?" in prompt:
+    return "TestFriend"
+
+  if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    return "a"
+
+  if "Choose one of ['a', 'b']:" in prompt:
+    return "b"
+    
+  if "Do you want to go back (Y / N)? " in prompt:
+    return "N"
+
+# Test to see if friends list returns empty and informs the user
+def test_empty_friends_list(monkeypatch,capsys):
+
+    # mock the first scenerio for the network menu, when friends list is empty
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+
+    # Call the check friend request function
+    show_network("TestUser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert ( "You have no friends!" in captured.out)
+
+# Test to see if a single friend request passes through
+def test_one_friend_request(monkeypatch,capsys):
+
+    # use helper to add a single friend
+    friend_request_helper(monkeypatch,capsys)
+
+    #Capture the printed output
+    captured = capsys.readouterr()
+    assert ( "Friend request sent to TestUser!" in captured.out)
+
+    #Mock quitting immediately after checking friend request
+    monkeypatch.setattr("builtins.input", mock_quit_Friend_request_input)
+
+    # Call the check friend request function
+    check_friend_request("TestUser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert ( "You have a pending friend request from:" in captured.out)
+    assert ( "TestFriend" in captured.out)
+
+    # Delete the friend request to refresh the list to none
+    delete_friend_request_helper(monkeypatch,capsys)
+
+# Test to see if three friend request pass through
+def test_three_friend_request(monkeypatch,capsys):
+
+    # use helper to add three friends
+    friend_request_helper(monkeypatch,capsys)
+    friend_request_helper(monkeypatch,capsys)
+    friend_request_helper(monkeypatch,capsys)
+
+    #Capture the printed output
+    captured = capsys.readouterr()
+    assert ( "Friend request sent to TestUser!" in captured.out)
+
+    #Mock quitting immediately after checking friend request
+    monkeypatch.setattr("builtins.input", mock_quit_Friend_request_input)
+
+    # Call the check friend request function
+    check_friend_request("TestUser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert ( "You have a pending friend request from:" in captured.out)
+    assert ( "TestFriend" in captured.out)
+    assert ( "TestFriend" in captured.out)
+    assert ( "TestFriend" in captured.out)
+
+    # Delete the friend request to refresh the list to none
+    delete_friend_request_helper(monkeypatch,capsys)
+    delete_friend_request_helper(monkeypatch,capsys)
+    delete_friend_request_helper(monkeypatch,capsys)
+
+    
+# Test to see if a single friend request is accepted
+def test_accept_friend(monkeypatch,capsys):
+
+    #Create another friend request
+    friend_request_helper(monkeypatch,capsys)
+
+    #Capture output to see if friend request is sent
+    captured = capsys.readouterr()
+    assert ( "Friend request sent to TestUser!" in captured.out)
+
+    #Mock accepting the friend request, then quitting
+    monkeypatch.setattr("builtins.input", mock_accept_request_input)
+
+    # Call the check friend request function
+    check_friend_request("TestUser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert ( "You have a pending friend request from:" in captured.out)
+    assert ( "TestFriend" in captured.out)
+    assert ( "Friend Added!" in captured.out)
+
+# Test to see if a single friend request is rejected
+def test_reject_friend(monkeypatch,capsys):
+
+    #Create a friend request to send over to use
+    friend_request_helper(monkeypatch,capsys)
+
+    #Capture output to see if friend request is sent
+    captured = capsys.readouterr()
+    assert ( "Friend request sent to TestUser!" in captured.out)
+
+    #Mock rejecting a request, then quitting
+    monkeypatch.setattr("builtins.input", mock_delete_request_input)
+
+    # Call the check friend request function
+    check_friend_request("TestUser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert ( "You have a pending friend request from:" in captured.out)
+    assert ( "TestFriend" in captured.out)
+    assert ( "Friend Rejected!" in captured.out)
+  
+
+# Test to see if a friend is added to the user's friend list.
+def test_user_add_friend_list(monkeypatch,capsys):
+
+  #Check to see if the user's friend list has the friend he accepted earlier
+  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V2)
+
+  #Show friends list
+  show_network("TestUser")
+
+  # Capture the printed output
+  captured = capsys.readouterr()
+
+  assert ("Here's a list of your friends:" in captured.out)
+  assert ("TestFriend" in captured.out)
+
+
+# Test to see if the user is added to the user's friend list.
+def test_friend_add_friend_list(monkeypatch,capsys):
+
+  #Checkt to siff the the friend's friend last had the user who accepted him
+  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V2)
+
+  #Show friends list
+  show_network("TestFriend")
+
+  # Capture the printed output
+  captured = capsys.readouterr()
+
+  assert ("Here's a list of your friends:" in captured.out)
+  assert ("TestUser" in captured.out)
+  
+# Test to remove a friend from the friends list
+def test_remove_friend(monkeypatch,capsys):
+
+  #Mock removing a friend from the friend's list
+  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V3)
+
+  #Show friends list, so to remove friend
+  show_network("TestUser")
+
+  # Capture the printed output
+  captured = capsys.readouterr()
+
+  assert ("Here's a list of your friends:" in captured.out)
+  assert ("TestFriend" in captured.out)
+  assert ("Friend Deleted" in captured.out)
+
+
+# Test to see if the user is removed from the user's friend list.
+def test_user_remove_friend_list(monkeypatch,capsys):
+
+  # Mock quitting after noticing no friends in the friends list
+  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+
+  #Show friends list
+  show_network("TestUser")
+
+  # Capture the printed output
+  captured = capsys.readouterr()
+
+  assert ( "You have no friends!" in captured.out)
+
+  
+
+# Test to see if the user is removed from the user's friend list.
+def test_friend_remove_friend_list(monkeypatch,capsys):
+
+  # Mock quitting after noticing no friends in the friends list
+  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+
+  #Show friend's list
+  show_network("TestFriend")
+
+  # Capture the printed output
+  captured = capsys.readouterr()
+
+  assert ( "You have no friends!" in captured.out)
+
 
 def test_friends_list_initially_empty():
 
@@ -1203,3 +1512,4 @@ def test_find_someone_you_know():
     delete_user('alice')
     delete_user('bob') 
     delete_user('charlie')
+    
