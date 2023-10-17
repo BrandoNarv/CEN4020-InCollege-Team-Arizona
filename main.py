@@ -647,7 +647,7 @@ def brand_policy():
 def guest_controls():
     draw_line(message="Guest Controls")
 
-    if signed_in:
+    if signed_in == False:
         for key, value in GUEST_CONTROLS.items():
             print(f"{key}. {value}")
         option = input(f"Choose one of {list(GUEST_CONTROLS.keys())}:").strip().lower()
@@ -691,7 +691,7 @@ def turn_on_off(x):
 def languages():
     draw_line(message="Languages")
 
-    if signed_in:
+    if signed_in == False:
         for key, value in LANGUAGES.items():
             print(f"{key}. {value}")
         language = LANGUAGES[
