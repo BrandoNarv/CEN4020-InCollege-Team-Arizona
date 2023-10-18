@@ -49,6 +49,163 @@ c.execute(
           )"""
 )
 
+c.execute(
+    """CREATE TABLE IF NOT EXISTS profile (
+
+          FOREIGN KEY (user) REFERENCES accounts (user),
+          FOREIGN KEY (university) REFERENCES accounts (university),
+          FOREIGN KEY (major) REFERENCES accounts (major),
+          title text,
+          about text
+
+          )"""
+)
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS experience (
+
+          user text,
+          experienceId text,
+          title text,
+          employer text,
+          date_started text,
+          date_ended text,
+          location text,
+          description text,
+          FOREIGN KEY (user) REFERENCES accounts (user)
+
+          )"""
+)
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS education (
+
+          user text,
+          educationId text,
+          school_name text,
+          degree text,
+          years_attended text,
+          FOREIGN KEY (user) REFERENCES accounts (user)
+
+          )"""
+)
+
+
+def create_profile(username, university, major, title, about):
+    """Returns True if the profile was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO profile VALUES (:user, :university, :major, :title, :about)",
+                {
+                    "user": username,
+                    "university": university,
+                    "major": major,
+                    "title": title,
+                    "about": about,
+                },
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add profile into sqlite table:", error)
+        return False
+
+
+def delete_profile(username):
+    """Returns True if the profile was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the profile with the provided username
+            c.execute("DELETE FROM profile WHERE user = ?", (username,))
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete profile from the sqlite table:", error)
+        return False
+
+
+def create_experience(
+    user, experienceId, title, employer, date_started, date_ended, location, description
+):
+    """Returns True if the experience was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO experience VALUES (:user, :experienceId, :title, :employer, :date_started, :date_ended, :location, :description)",
+                {
+                    "user": user,
+                    "experienceId": experienceId,
+                    "title": title,
+                    "employer": employer,
+                    "date_started": date_started,
+                    "date_ended": date_ended,
+                    "location": location,
+                    "description": description,
+                },
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add experience into sqlite table:", error)
+        return False
+
+
+def delete_experience(user, experienceId):
+    """Returns True if the experience was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the experience with the provided username
+            c.execute(
+                "DELETE FROM experience WHERE user = ? AND experienceId = ?",
+                (
+                    user,
+                    experienceId,
+                ),
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete experience from the sqlite table:", error)
+        return False
+
+
+def create_education(user, educationId, school_name, degree, years_attended):
+    """Returns True if the education was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO education VALUES (:user, :educationId, :school_name, :degree, :years_attended)",
+                {
+                    "user": user,
+                    "educationId": educationId,
+                    "school_name": school_name,
+                    "degree": degree,
+                    "years_attended": years_attended,
+                },
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add education into sqlite table:", error)
+        return False
+
+
+def delete_education(user, educationId):
+    """Returns True if the education was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the education with the provided username
+            c.execute(
+                "DELETE FROM education WHERE user = ? AND educationId = ?",
+                (
+                    user,
+                    educationId,
+                ),
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete education from the sqlite table:", error)
+        return False
+
 
 def create_user(username, password, first, last, university, major):
     """Returns True if the user was successfully created, False otherwise"""
