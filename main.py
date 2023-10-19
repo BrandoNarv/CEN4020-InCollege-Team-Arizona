@@ -16,6 +16,8 @@ FEATURES = {
     "d": "Go to Navigation Links",
     "e": "Show My Network",
     "f": "Check Pending Friend Requests",
+    "g": "Display Profiles",
+    "h": "Log Out",
 }
 
 JOB_OPTIONS = {
@@ -29,10 +31,17 @@ FRIEND_OPTIONS = {
     "c": "Find by major",
     "d": "Go back",
 }
+
 FRIEND_REQUEST = {
     "a": "Accept",
     "r": "Reject",
     "b": "Go Back",
+}
+
+PROFILE_OPTIONS = {
+    "a": "Display Your Profile",
+    "b": "Display Your Friend's Profile",
+    "c": "Go Back",
 }
 
 NAVIGATION_LINKS_GROUP = {
@@ -195,10 +204,10 @@ def reached_user_limit(num_users):
 def validate_password(input_p):
     """Check if password meets requirements"""
     if not (
-        8 <= len(input_p) <= 12
-        and any(char.isupper() for char in input_p)
-        and any(char.isdigit() for char in input_p)
-        and any(char in string.punctuation for char in input_p)
+            8 <= len(input_p) <= 12
+            and any(char.isupper() for char in input_p)
+            and any(char.isdigit() for char in input_p)
+            and any(char in string.punctuation for char in input_p)
     ):
         print("Password does not meet requirements, please try again")
         return None
@@ -235,6 +244,10 @@ def feature_direct(feature_choice, username):
         show_network(username)
     elif feature_choice == "f":
         check_friend_request(username)
+    elif feature_choice == "g":
+        display_navigation(username)
+    elif feature_choice == "h":
+        logout(username)
 
 
 def job_search(username):
@@ -647,7 +660,7 @@ def brand_policy():
 def guest_controls():
     draw_line(message="Guest Controls")
 
-    if signed_in == False:
+    if signed_in is False:
         for key, value in GUEST_CONTROLS.items():
             print(f"{key}. {value}")
         option = input(f"Choose one of {list(GUEST_CONTROLS.keys())}:").strip().lower()
@@ -974,8 +987,37 @@ def directories():
         choose_useful_links()
 
 
+def display_navigation(username):
+    """Job search page"""
+    draw_line(message="PROFILE_OPTIONS")
+    print("What would you like to do with the profiles?")
+    for key, value in PROFILE_OPTIONS.items():
+        print(f"{key}. {value}")
+    feature_choice = input(f"Choose one of {list(PROFILE_OPTIONS.keys())}:").strip().lower()
+
+    if feature_choice == "a":
+        display_profile(username)
+    if feature_choice == "b":
+        display_friend_profile(username)
+    elif feature_choice == "c":
+        if go_back():
+            choose_features(username)
+
+
 def display_profile(username):
     draw_line(message="PROFILE")
+    user_first_name = get_first_name(username)
+    user_last_name = get_last_name(username)
+    print(f"{user_first_name} {user_last_name}")
+    # most likely return a list of profile attribute to enumerate thru
+    """
+    for i, name in enumerate(friend_list):
+        print(f"{name[1]}")"""
+    choose_features(username)
+
+
+def display_friend_profile(username):
+    draw_line(message="Friend List")
     friend_list = list_of_friends(username)
     if friend_list is False:
         print("You have no friends!")
@@ -983,17 +1025,35 @@ def display_profile(username):
     else:
         print("Here's a list of your friends:")
         for i, name in enumerate(friend_list):
-            print(f"{name[1]}")
-        choice = input("Would you like to disconnect from one of these friends? (y/n):")
+            print(f"{name[1]} ")
+        choice = input("Would you like to display the profile from one of these friends? (y/n):")
         if choice == "y":
-            delete_friend(username)
-            choose_features(username)
+            friend_name = input("Which friend's profile would you like to see?:")
+            user_exists = does_friend_request_match(username, friend_name)
+            if user_exists:
+                # function to display friend's profile
+                choose_features(username)
+            else:
+                print("Username does not exist in friend requests. Try again!")
+                display_friend_profile(username)
         elif choice == "n":
             if go_back():
                 choose_features(username)
         else:
             print("Character not identified. Please try again")
-            return show_network(username)
+            return display_friend_profile(username)
+
+
+def logout(username):
+    """Ask user if they want to log out"""
+    decision = input("Do you want to log out (Y / N)? ").strip().upper()
+    if decision == "Y":
+        return 0
+    elif decision == "N":
+        choose_features(username)
+    else:
+        print("Invalid input, please try again")
+        logout()
 
 
 def main_entry():
