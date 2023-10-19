@@ -973,6 +973,7 @@ def directories():
     if go_back():
         choose_useful_links()
 
+
 def display_profile(username):
     draw_line(message="PROFILE")
     friend_list = list_of_friends(username)
@@ -993,6 +994,7 @@ def display_profile(username):
         else:
             print("Character not identified. Please try again")
             return show_network(username)
+
 
 def main_entry():
     """Welcome page and get the user into the system through login or signup"""
