@@ -974,6 +974,28 @@ def directories():
         choose_useful_links()
 
 
+def display_profile(username):
+    draw_line(message="PROFILE")
+    friend_list = list_of_friends(username)
+    if friend_list is False:
+        print("You have no friends!")
+        choose_features(username)
+    else:
+        print("Here's a list of your friends:")
+        for i, name in enumerate(friend_list):
+            print(f"{name[1]}")
+        choice = input("Would you like to disconnect from one of these friends? (y/n):")
+        if choice == "y":
+            delete_friend(username)
+            choose_features(username)
+        elif choice == "n":
+            if go_back():
+                choose_features(username)
+        else:
+            print("Character not identified. Please try again")
+            return show_network(username)
+
+
 def main_entry():
     """Welcome page and get the user into the system through login or signup"""
     draw_line(message="In College")
