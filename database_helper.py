@@ -7,7 +7,7 @@ c = conn.cursor()
 c.execute(
     """CREATE TABLE IF NOT EXISTS accounts (
 
-          user text,
+          user text unique,
           pass text,
           first text,
           last text,
@@ -34,8 +34,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends (
     
-          user text,
-          friend_user text
+          user text unique,
+          friend_user text unique
 
           )"""
 )
@@ -43,8 +43,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends_list (
 
-          user text,
-          friend_user text
+          user text unique,
+          friend_user text unique
 
           )"""
 )
@@ -52,7 +52,7 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS profile (
 
-          user text,
+          user text unique,
           university text,
           major text,
           title text,
@@ -64,8 +64,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS experience (
 
-          user text,
-          experienceId text,
+          user text unique,
+          experienceId text unique,
           title text,
           employer text,
           date_started text,
@@ -79,8 +79,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS education (
 
-          user text,
-          educationId text,
+          user text unique,
+          educationId text unique,
           school_name text,
           degree text,
           years_attended text
