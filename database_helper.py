@@ -52,9 +52,9 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS profile (
 
-          FOREIGN KEY (user) REFERENCES accounts (user),
-          FOREIGN KEY (university) REFERENCES accounts (university),
-          FOREIGN KEY (major) REFERENCES accounts (major),
+          user text,
+          university text,
+          major text,
           title text,
           about text
 
@@ -71,8 +71,7 @@ c.execute(
           date_started text,
           date_ended text,
           location text,
-          description text,
-          FOREIGN KEY (user) REFERENCES accounts (user)
+          description text
 
           )"""
 )
@@ -84,8 +83,7 @@ c.execute(
           educationId text,
           school_name text,
           degree text,
-          years_attended text,
-          FOREIGN KEY (user) REFERENCES accounts (user)
+          years_attended text
 
           )"""
 )
