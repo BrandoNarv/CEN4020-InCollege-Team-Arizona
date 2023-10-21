@@ -64,8 +64,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS experience (
 
-          user text unique,
-          experienceId text unique,
+          user text,
+          experienceId text,
           title text,
           employer text,
           date_started text,
@@ -80,7 +80,6 @@ c.execute(
     """CREATE TABLE IF NOT EXISTS education (
 
           user text unique,
-          educationId text unique,
           school_name text,
           degree text,
           years_attended text
@@ -110,15 +109,64 @@ def create_profile(username, university, major, title, about):
         return False
 
 
-def delete_profile(username):
-    """Returns True if the profile was successfully deleted, False otherwise"""
+def get_profile(username):
+    """Get the combined profile from profile, education, and experience tables"""
+    profile, education, experience = None, None, None
+    final_profile = {}
     try:
         with conn:
-            # Delete the profile with the provided username
-            c.execute("DELETE FROM profile WHERE user = ?", (username,))
+            c.execute("SELECT * FROM profile WHERE user = :user", {"user": username})
+            profile = c.fetchone()
+            c.execute("SELECT * FROM education WHERE user = :user", {"user": username})
+            education = c.fetchone()
+            c.execute("SELECT * FROM experience WHERE user = :user", {"user": username})
+            jobs = c.fetchall()
+
+            if not profile and not education and not experience:
+                return None
+
+            if profile is not None:
+                final_profile["user"] = profile[0]
+                final_profile["university"] = profile[1]
+                final_profile["major"] = profile[2]
+                final_profile["title"] = profile[3]
+                final_profile["about"] = profile[4]
+            if education is not None:
+                final_profile["school_name"] = education[1]
+                final_profile["degree"] = education[2]
+                final_profile["years_attended"] = education[3]
+            if jobs is not None:
+                final_profile["experience"] = []
+                for job in jobs:
+                    final_profile["experience"].append(
+                        {
+                            "experienceId": job[1],
+                            "title": job[2],
+                            "employer": job[3],
+                            "date_started": job[4],
+                            "date_ended": job[5],
+                            "location": job[6],
+                            "description": job[7],
+                        }
+                    )
+            return final_profile
+    except sqlite3.Error as error:
+        print("Failed to get profile from sqlite table:", error)
+        return None
+
+
+def update_profile(username, university, major, title, about):
+    """Returns True if the profile was successfully updated, False otherwise"""
+    try:
+        with conn:
+            # Update the profile with the provided username
+            c.execute(
+                "UPDATE profile SET university = ?, major = ?, title = ?, about = ? WHERE user = ?",
+                (university, major, title, about, username),
+            )
         return True
     except sqlite3.Error as error:
-        print("Failed to delete profile from the sqlite table:", error)
+        print("Failed to update profile from the sqlite table:", error)
         return False
 
 
@@ -148,34 +196,41 @@ def create_experience(
         return False
 
 
-def delete_experience(user, experienceId):
-    """Returns True if the experience was successfully deleted, False otherwise"""
+def update_experience(
+    user, experienceId, title, employer, date_started, date_ended, location, description
+):
+    """Returns True if the experience was successfully updated, False otherwise"""
     try:
         with conn:
-            # Delete the experience with the provided username
+            # Update the experience with the provided username
             c.execute(
-                "DELETE FROM experience WHERE user = ? AND experienceId = ?",
+                "UPDATE experience SET title = ?, employer = ?, date_started = ?, date_ended = ?, location = ?, description = ? WHERE user = ? AND experienceId = ?",
                 (
+                    title,
+                    employer,
+                    date_started,
+                    date_ended,
+                    location,
+                    description,
                     user,
                     experienceId,
                 ),
             )
         return True
     except sqlite3.Error as error:
-        print("Failed to delete experience from the sqlite table:", error)
+        print("Failed to update experience from the sqlite table:", error)
         return False
 
 
-def create_education(user, educationId, school_name, degree, years_attended):
+def create_education(user, school_name, degree, years_attended):
     """Returns True if the education was successfully created, False otherwise"""
     try:
         with conn:
             # Insert username, password, first name, and last name into database
             c.execute(
-                "INSERT INTO education VALUES (:user, :educationId, :school_name, :degree, :years_attended)",
+                "INSERT INTO education VALUES (:user, :school_name, :degree, :years_attended)",
                 {
                     "user": user,
-                    "educationId": educationId,
                     "school_name": school_name,
                     "degree": degree,
                     "years_attended": years_attended,
@@ -187,21 +242,18 @@ def create_education(user, educationId, school_name, degree, years_attended):
         return False
 
 
-def delete_education(user, educationId):
-    """Returns True if the education was successfully deleted, False otherwise"""
+def update_education(user, school_name, degree, years_attended):
+    """ "Returns True if the education was successfully updated, False otherwise"""
     try:
         with conn:
-            # Delete the education with the provided username
+            # Update the education with the provided username
             c.execute(
-                "DELETE FROM education WHERE user = ? AND educationId = ?",
-                (
-                    user,
-                    educationId,
-                ),
+                "UPDATE education SET school_name = ?, degree = ?, years_attended = ? WHERE user = ?",
+                (school_name, degree, years_attended, user),
             )
         return True
     except sqlite3.Error as error:
-        print("Failed to delete education from the sqlite table:", error)
+        print("Failed to update education from the sqlite table:", error)
         return False
 
 
@@ -225,6 +277,30 @@ def create_user(username, password, first, last, university, major):
     except sqlite3.Error as error:
         print("Failed to add user into sqlite table:", error)
         return False
+
+
+def get_user(username):
+    """Returns the user information for a given username."""
+    try:
+        with conn:
+            c.execute("SELECT * FROM accounts WHERE user = :user", {"user": username})
+            user = c.fetchone()
+            if user is not None:
+                # User found, return it as a dictionary
+                return {
+                    "user": user[0],
+                    "pass": user[1],
+                    "first": user[2],
+                    "last": user[3],
+                    "university": user[4],
+                    "major": user[5],
+                }
+            else:
+                # User not found
+                return None
+    except sqlite3.Error as error:
+        print("Failed to get user from sqlite table:", error)
+        return None
 
 
 def delete_user(username):
