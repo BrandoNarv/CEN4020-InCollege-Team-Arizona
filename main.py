@@ -1141,25 +1141,27 @@ def create_user_profile(username):
                 print("Error updating experience")
                 if go_back():
                     display_profile_navigation(username)
-                else:
-                    create_user_profile(username)
+                # else:
+                #     create_user_profile(username)
     if go_back():
         display_profile_navigation(username)
-    else:
-        create_user_profile(username)
+    # else:
+    #     create_user_profile(username)
 
 
 def display_user_profile(username):
+    first = get_first_name(username)
+    last = get_last_name(username)
     draw_line(message="PROFILE")
-    print("Here's your profile:")
+    print(f"Here's {first} {last}'s profile:")
     if user_profile := get_profile(username):
         print_profile_only(user_profile)
     else:
         print("You have no profile. Please create one!")
     if go_back():
         display_profile_navigation(username)
-    else:
-        display_user_profile(username)
+    # else:
+    #     display_user_profile(username)
 
 
 def display_user_friend_profile(username):
@@ -1202,13 +1204,16 @@ def display_friend_profile(username):
     else:
         print("Here's a list of your friends:")
         for i, name in enumerate(friend_list):
-            print(f"{name[1]} ")
+            if not get_profile(name[1]):
+                print(f"{name[1]}")
+            else:
+                print(f"{name[1]} - PROFILE")
         choice = input(
             "Would you like to display the profile from one of these friends? (y/n):"
         )
         if choice == "y":
             friend_name = input("Which friend's profile would you like to see?:")
-            user_exists = does_friend_request_match(username, friend_name)
+            user_exists = does_friend_match(username, friend_name)
             if user_exists:
                 display_user_friend_profile(friend_name)
                 choose_features(username)
@@ -1232,7 +1237,7 @@ def logout(username):
         choose_features(username)
     else:
         print("Invalid input, please try again")
-        logout()
+        logout(username)
 
 
 def main_entry():
