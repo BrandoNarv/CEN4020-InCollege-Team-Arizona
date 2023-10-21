@@ -1162,6 +1162,15 @@ def display_user_profile(username):
         display_user_profile(username)
 
 
+def display_user_friend_profile(username):
+    draw_line(message=f"{username.upper()}'S PROFILE")
+    print("Here's your friend's profile:")
+    if user_profile := get_profile(username):
+        print_profile_only(user_profile)
+    else:
+        print(f"{username} has no profile. Encourage them to make one!")
+
+
 def print_profile_only(user_profile):
     print("Username: ", user_profile["user"])
     print("Title: ", user_profile["title"])
@@ -1201,7 +1210,7 @@ def display_friend_profile(username):
             friend_name = input("Which friend's profile would you like to see?:")
             user_exists = does_friend_request_match(username, friend_name)
             if user_exists:
-                # function to display friend's profile
+                display_user_friend_profile(friend_name)
                 choose_features(username)
             else:
                 print("Username does not exist in friend requests. Try again!")
