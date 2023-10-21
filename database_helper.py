@@ -7,7 +7,7 @@ c = conn.cursor()
 c.execute(
     """CREATE TABLE IF NOT EXISTS accounts (
 
-          user text unique,
+          user text ,
           pass text,
           first text,
           last text,
@@ -34,8 +34,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends (
     
-          user text unique,
-          friend_user text unique
+          user text,
+          friend_user text 
 
           )"""
 )
@@ -43,8 +43,8 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends_list (
 
-          user text unique,
-          friend_user text unique
+          user text,
+          friend_user text 
 
           )"""
 )
@@ -52,7 +52,7 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS profile (
 
-          user text unique,
+          user text ,
           university text,
           major text,
           title text,
@@ -79,7 +79,7 @@ c.execute(
 c.execute(
     """CREATE TABLE IF NOT EXISTS education (
 
-          user text unique,
+          user text ,
           school_name text,
           degree text,
           years_attended text
@@ -489,14 +489,10 @@ def add_to_friend_list(username, friend_username):
     """Returns True if the friend was successfully added into the database, False otherwise"""
     try:
         with conn:
-            c.execute(
-                "INSERT INTO friends_list VALUES (:user, :friend_user)",
-                {"user": username, "friend_user": friend_username},
-            )
-            c.execute(
-                "INSERT INTO friends_list VALUES (:user, :friend_user)",
-                {"user": friend_username, "friend_user": username},
-            )
+            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
+                      {"user": username, "friend_user": friend_username})
+            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
+                      {"user": friend_username, "friend_user": username})
         return True
     except sqlite3.Error as error:
         print("Failed to add friend to the sqlite table:", error)
