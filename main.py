@@ -39,9 +39,10 @@ FRIEND_REQUEST = {
 }
 
 PROFILE_OPTIONS = {
-    "a": "Display Your Profile",
-    "b": "Display Your Friend's Profile",
-    "c": "Go Back",
+    "a": "Create or Update Your Profile",
+    "b": "Display Your Profile",
+    "c": "Display Your Friend's Profile",
+    "d": "Go Back",
 }
 
 NAVIGATION_LINKS_GROUP = {
@@ -204,10 +205,10 @@ def reached_user_limit(num_users):
 def validate_password(input_p):
     """Check if password meets requirements"""
     if not (
-            8 <= len(input_p) <= 12
-            and any(char.isupper() for char in input_p)
-            and any(char.isdigit() for char in input_p)
-            and any(char in string.punctuation for char in input_p)
+        8 <= len(input_p) <= 12
+        and any(char.isupper() for char in input_p)
+        and any(char.isdigit() for char in input_p)
+        and any(char in string.punctuation for char in input_p)
     ):
         print("Password does not meet requirements, please try again")
         return None
@@ -245,7 +246,7 @@ def feature_direct(feature_choice, username):
     elif feature_choice == "f":
         check_friend_request(username)
     elif feature_choice == "g":
-        display_navigation(username)
+        display_profile_navigation(username)
     elif feature_choice == "h":
         logout(username)
 
@@ -987,33 +988,200 @@ def directories():
         choose_useful_links()
 
 
-def display_navigation(username):
-    """Job search page"""
+def display_profile_navigation(username):
+    """Profile page"""
     draw_line(message="PROFILE_OPTIONS")
     print("What would you like to do with the profiles?")
     for key, value in PROFILE_OPTIONS.items():
         print(f"{key}. {value}")
-    feature_choice = input(f"Choose one of {list(PROFILE_OPTIONS.keys())}:").strip().lower()
+    feature_choice = (
+        input(f"Choose one of {list(PROFILE_OPTIONS.keys())}:").strip().lower()
+    )
 
     if feature_choice == "a":
-        display_profile(username)
+        create_user_profile(username)
     if feature_choice == "b":
-        display_friend_profile(username)
+        display_user_profile(username)
     elif feature_choice == "c":
+        display_friend_profile(username)
+    elif feature_choice == "d":
         if go_back():
             choose_features(username)
 
 
-def display_profile(username):
+def create_user_profile(username):
+    """Get user's information to create or update a profile"""
+    draw_line(message="Create/Update Profile")
+    if not get_profile(username):
+        print(
+            """You have no profile. So let's create one!\nIf you don't want to fill up certain fields, just press enter"""
+        )
+        university = input("Please enter your university: ").title()
+        major = input("Please enter your major: ").title()
+        years_attended = input(f"How many years did you attend {university}: ")
+        degree = input("Please enter your degree: ")
+        title = input("Please enter your title: ")
+        about_me = input("Please enter a short description about yourself: ")
+        if create_profile(username, university, major, title, about_me):
+            print("Profile created!")
+        else:
+            print("Error creating profile")
+            if go_back():
+                display_profile_navigation(username)
+            else:
+                create_user_profile(username)
+        if create_education(username, university, degree, years_attended):
+            print("Education created!")
+        else:
+            print("Error creating education")
+            if go_back():
+                display_profile_navigation(username)
+            else:
+                create_user_profile(username)
+        print("Let's add some experience!")
+        count = 0
+        while count < 3:
+            experienceId = count
+            title = input("Please enter your title: ")
+            employer = input("Please enter your employer: ")
+            started_date = input("Please enter your start date: ")
+            end_date = input("Please enter your end date: ")
+            location = input("Please enter your location: ")
+            description = input("Please enter your description: ")
+            if create_experience(
+                username,
+                experienceId,
+                title,
+                employer,
+                started_date,
+                end_date,
+                location,
+                description,
+            ):
+                print("Experience created!")
+                count += 1
+                stop = ""
+                while stop not in ["y", "n"]:
+                    stop = input("Do you want to add another experience? (y/n): ")
+                    if stop == "n":
+                        count = 3
+                        break
+                    elif stop == "y":
+                        break
+                    else:
+                        print("Invalid input, please try again")
+            else:
+                print("Error creating experience")
+                if go_back():
+                    display_profile_navigation(username)
+                else:
+                    create_user_profile(username)
+    else:
+        print("Here is your current profile:")
+        user_profile = get_profile(username)
+        print_profile_only(user_profile)
+        print("You can update your profile here:")
+        university = input("Please enter your university: ").title()
+        major = input("Please enter your major: ").title()
+        degree = input("Please enter your degree: ")
+        years_attended = input(f"How many years did you attend {university}: ")
+        title = input("Please enter your title: ")
+        about_me = input("Please enter a short description about yourself: ")
+        if update_profile(username, university, major, title, about_me):
+            print("Profile updated!")
+        else:
+            print("Error updating profile")
+            if go_back():
+                display_profile_navigation(username)
+            else:
+                create_user_profile(username)
+        if update_education(username, university, degree, years_attended):
+            print("Education updated!")
+        else:
+            print("Error updating education")
+            if go_back():
+                display_profile_navigation(username)
+            else:
+                create_user_profile(username)
+        print("Let's update some experience!")
+        count = 0
+        while count < 3:
+            experienceId = count
+            title = input("Please enter your title: ")
+            employer = input("Please enter your employer: ")
+            started_date = input("Please enter your start date: ")
+            end_date = input("Please enter your end date: ")
+            location = input("Please enter your location: ")
+            description = input("Please enter your description: ")
+            if update_experience(
+                username,
+                experienceId,
+                title,
+                employer,
+                started_date,
+                end_date,
+                location,
+                description,
+            ):
+                print("Experience updated!")
+                count += 1
+                stop = ""
+                while stop not in ["y", "n"]:
+                    stop = input("Do you want to update another experience? (y/n): ")
+                    if stop == "n":
+                        count = 3
+                        break
+                    elif stop == "y":
+                        if count == 3:
+                            print("You have reached the maximum number of experiences!")
+                        break
+                    else:
+                        print("Invalid input, please try again")
+            else:
+                print("Error updating experience")
+                if go_back():
+                    display_profile_navigation(username)
+                else:
+                    create_user_profile(username)
+    if go_back():
+        display_profile_navigation(username)
+    else:
+        create_user_profile(username)
+
+
+def display_user_profile(username):
     draw_line(message="PROFILE")
-    user_first_name = get_first_name(username)
-    user_last_name = get_last_name(username)
-    print(f"{user_first_name} {user_last_name}")
-    # most likely return a list of profile attribute to enumerate thru
-    """
-    for i, name in enumerate(friend_list):
-        print(f"{name[1]}")"""
-    choose_features(username)
+    print("Here's your profile:")
+    if user_profile := get_profile(username):
+        print_profile_only(user_profile)
+    else:
+        print("You have no profile. Please create one!")
+    if go_back():
+        display_profile_navigation(username)
+    else:
+        display_user_profile(username)
+
+
+def print_profile_only(user_profile):
+    print("Username: ", user_profile["user"])
+    print("Title: ", user_profile["title"])
+    print("About Me: ", user_profile["about"])
+    print("\nEducation:")
+    print("University: ", user_profile["university"])
+    print("Major: ", user_profile["major"])
+    print("Degree: ", user_profile["degree"])
+    print("Years Attended: ", user_profile["years_attended"])
+    print("\nExperience:")
+    for idx, experience in enumerate(user_profile["experience"]):
+        print(f"Experience {idx + 1}:")
+        print("Title: ", experience["title"])
+        print("Employer: ", experience["employer"])
+        print("Location: ", experience["location"])
+        print("Start Date: ", experience["date_started"])
+        print("End Date: ", experience["date_ended"])
+        print("Location: ", experience["location"])
+        print("Description: ", experience["description"])
+        print("\n")
 
 
 def display_friend_profile(username):
@@ -1021,12 +1189,14 @@ def display_friend_profile(username):
     friend_list = list_of_friends(username)
     if friend_list is False:
         print("You have no friends!")
-        choose_features(username)
+        display_profile_navigation(username)
     else:
         print("Here's a list of your friends:")
         for i, name in enumerate(friend_list):
             print(f"{name[1]} ")
-        choice = input("Would you like to display the profile from one of these friends? (y/n):")
+        choice = input(
+            "Would you like to display the profile from one of these friends? (y/n):"
+        )
         if choice == "y":
             friend_name = input("Which friend's profile would you like to see?:")
             user_exists = does_friend_request_match(username, friend_name)
