@@ -661,7 +661,7 @@ def brand_policy():
 def guest_controls():
     draw_line(message="Guest Controls")
 
-    if signed_in is False:
+    if signed_in:
         for key, value in GUEST_CONTROLS.items():
             print(f"{key}. {value}")
         option = input(f"Choose one of {list(GUEST_CONTROLS.keys())}:").strip().lower()
@@ -705,7 +705,7 @@ def turn_on_off(x):
 def languages():
     draw_line(message="Languages")
 
-    if signed_in == False:
+    if signed_in:
         for key, value in LANGUAGES.items():
             print(f"{key}. {value}")
         language = LANGUAGES[
@@ -1042,7 +1042,7 @@ def create_user_profile(username):
         count = 0
         while count < 3:
             experienceId = count
-            title = input("Please enter your title: ")
+            title = input("Please enter your experience title: ")
             employer = input("Please enter your employer: ")
             started_date = input("Please enter your start date: ")
             end_date = input("Please enter your end date: ")
@@ -1061,12 +1061,14 @@ def create_user_profile(username):
                 print("Experience created!")
                 count += 1
                 stop = ""
-                while stop not in ["y", "n"]:
-                    stop = input("Do you want to add another experience? (y/n): ")
-                    if stop == "n":
+                while stop not in ["Y", "N"]:
+                    stop = input("Do you want to add another experience? (Y/N): ").strip().upper()
+                    if stop == "N":
                         count = 3
                         break
-                    elif stop == "y":
+                    elif stop == "Y":
+                        if count == 3:
+                            print("You have reached the maximum number of experiences!")
                         break
                     else:
                         print("Invalid input, please try again")
@@ -1107,7 +1109,7 @@ def create_user_profile(username):
         count = 0
         while count < 3:
             experienceId = count
-            title = input("Please enter your title: ")
+            title = input("Please enter your experience title: ")
             employer = input("Please enter your employer: ")
             started_date = input("Please enter your start date: ")
             end_date = input("Please enter your end date: ")
@@ -1126,12 +1128,12 @@ def create_user_profile(username):
                 print("Experience updated!")
                 count += 1
                 stop = ""
-                while stop not in ["y", "n"]:
-                    stop = input("Do you want to update another experience? (y/n): ")
-                    if stop == "n":
+                while stop not in ["Y", "N"]:
+                    stop = input("Do you want to update another experience? (Y/N): ").strip().upper()
+                    if stop == "N":
                         count = 3
                         break
-                    elif stop == "y":
+                    elif stop == "Y":
                         if count == 3:
                             print("You have reached the maximum number of experiences!")
                         break
@@ -1143,10 +1145,23 @@ def create_user_profile(username):
                     display_profile_navigation(username)
                 # else:
                 #     create_user_profile(username)
-    if go_back():
-        display_profile_navigation(username)
+    display_choice(username)
     # else:
     #     create_user_profile(username)
+
+
+def display_choice(username):
+    while True:
+        user_input = input("Do you want to see what your profile looks like (Y/N)? ").strip().upper()
+        if user_input == "Y":
+            display_user_profile(username)
+            break
+        elif user_input == "N":
+            if go_back():
+                display_profile_navigation(username)
+                break
+        else:
+            print("Invalid choice! Try Again!")
 
 
 def display_user_profile(username):
@@ -1190,7 +1205,6 @@ def print_profile_only(user_profile):
         print("Location: ", experience["location"])
         print("Start Date: ", experience["date_started"])
         print("End Date: ", experience["date_ended"])
-        print("Location: ", experience["location"])
         print("Description: ", experience["description"])
         print("\n")
 

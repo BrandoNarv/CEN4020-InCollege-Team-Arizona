@@ -111,7 +111,7 @@ def mock_try_again_input(prompt):
 
 
 def mock_features_input(prompt):
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
     if "Choose one of ['a', 'b']:" in prompt:
         return "b"
@@ -194,6 +194,8 @@ def test_features(monkeypatch, capsys):
     assert "d. Go to Navigation Links" in captured.out
     assert "e. Show My Network" in captured.out
     assert "f. Check Pending Friend Requests" in captured.out
+    assert "g. Display Profiles" in captured.out
+    assert "h. Log Out" in captured.out
 
 
 def test_learn_skill(monkeypatch, capsys):
@@ -830,10 +832,10 @@ def mock_user_agreement_input(prompt):
 def mock_privacy_policy_input(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']: " in prompt:
         return "e"
+    if "Choose one of ['a', 'b']:" in prompt:
+        return "a"
     if "Choose one of ['a', 'b', 'c']:" in prompt:
         return "a"
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
@@ -1209,7 +1211,7 @@ def delete_friend_request_helper(monkeypatch, capsys):
 
 # Mocks quiting the program if network has no friends
 def mock_quit_from_network_input_V1(prompt):
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
 
     if "Choose one of ['a', 'b']:" in prompt:
@@ -1236,7 +1238,7 @@ def mock_quit_from_network_input_V3(prompt):
     if "Which user would you like to delete?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
 
     if "Choose one of ['a', 'b']:" in prompt:
@@ -1269,7 +1271,7 @@ def mock_accept_request_input(prompt):
     if "Which user would you like to add?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
 
     if "Choose one of ['a', 'b']:" in prompt:
@@ -1287,7 +1289,7 @@ def mock_delete_request_input(prompt):
     if "Which user would you like to reject?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
 
     if "Choose one of ['a', 'b']:" in prompt:
@@ -1533,3 +1535,450 @@ def test_find_someone_you_know():
     delete_user("alice")
     delete_user("bob")
     delete_user("charlie")
+
+
+"///////////////////////   Epic #5   //////////////////////////////////////////////"
+
+
+def mock_profile_choice_and_features_input(prompt):
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+        return "g"
+    if "Choose one of ['a', 'b', 'c', 'd']:" in prompt:
+        return "d"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_profile_choice_and_features(monkeypatch, capsys):
+    # Mock user input for choose_features and display_profile_navigation functions
+    monkeypatch.setattr("builtins.input", mock_profile_choice_and_features_input)
+
+    # Call the choose_features function
+    choose_features("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the feature to make, update, display, or search for a profile is shown in when a user logs in
+    assert "g. Display Profiles" in captured.out
+
+    # Assert the features for profiles are available in the program
+    assert "a. Create or Update Your Profile" in captured.out
+    assert "b. Display Your Profile" in captured.out
+    assert "c. Display Your Friend's Profile" in captured.out
+    assert "d. Go Back" in captured.out
+
+
+def mock_create_user_profile_V1(prompt):
+    # Tests user profile that is entirely filled out
+    if "Please enter your university: " in prompt:
+        return "university of south florida"
+    if "Please enter your major: " in prompt:
+        return "computer science"
+    if "How many years did you attend University Of South Florida: " in prompt:
+        return "3"
+    if "Please enter your degree: " in prompt:
+        return "Bachelors"
+    if "Please enter your title: " in prompt:
+        return "3rd Year Computer Science Student"
+    if "Please enter a short description about yourself: " in prompt:
+        return "I am a third year computer science student that is looking for a job!"
+    if "Please enter your experience title: " in prompt:
+        return "Intern"
+    if "Please enter your employer: " in prompt:
+        return "Boeing"
+    if "Please enter your start date: " in prompt:
+        return "October 1st, 2020"
+    if "Please enter your end date: " in prompt:
+        return "December 30th, 2021"
+    if "Please enter your location: " in prompt:
+        return "New York"
+    if "Please enter your description: " in prompt:
+        return "Worked at Boeing as an intern to fix up airline website"
+    if "Do you want to add another experience? (Y/N): " in prompt:
+        return "N"
+    if "Do you want to see what your profile looks like (Y/N)? " in prompt:
+        return "Y"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def mock_create_user_profile_V2(prompt):
+    # Tests user profile that has education info but no lines of experience info
+    if "Please enter your university: " in prompt:
+        return "university of florida"
+    if "Please enter your major: " in prompt:
+        return "biology"
+    if "How many years did you attend University Of Florida: " in prompt:
+        return "6"
+    if "Please enter your degree: " in prompt:
+        return "Masters"
+    if "Please enter your title: " in prompt:
+        return "1st Year Biology Student"
+    if "Please enter a short description about yourself: " in prompt:
+        return "I am a first year biology student that is looking for a job!"
+    if "Please enter your experience title: " in prompt:
+        return ""
+    if "Please enter your employer: " in prompt:
+        return ""
+    if "Please enter your start date: " in prompt:
+        return ""
+    if "Please enter your end date: " in prompt:
+        return ""
+    if "Please enter your location: " in prompt:
+        return ""
+    if "Please enter your description: " in prompt:
+        return ""
+    if "Do you want to add another experience? (Y/N): " in prompt:
+        return "N"
+    if "Do you want to see what your profile looks like (Y/N)? " in prompt:
+        return "Y"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+    
+
+def mock_create_user_profile_V3(prompt):
+    # Tests user profile that contains only 1 line about their education but no lines of experience info or profile info
+    if "Please enter your university: " in prompt:
+        return "university of central florida"
+    if "Please enter your major: " in prompt:
+        return ""
+    if "How many years did you attend University Of Central Florida: " in prompt:
+        return ""
+    if "Please enter your degree: " in prompt:
+        return ""
+    if "Please enter your title: " in prompt:
+        return ""
+    if "Please enter a short description about yourself: " in prompt:
+        return ""
+    if "Please enter your experience title: " in prompt:
+        return ""
+    if "Please enter your employer: " in prompt:
+        return ""
+    if "Please enter your start date: " in prompt:
+        return ""
+    if "Please enter your end date: " in prompt:
+        return ""
+    if "Please enter your location: " in prompt:
+        return ""
+    if "Please enter your description: " in prompt:
+        return ""
+    if "Do you want to add another experience? (Y/N): " in prompt:
+        return "N"
+    if "Do you want to see what your profile looks like (Y/N)? " in prompt:
+        return "Y"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+    
+
+def mock_create_user_profile_V4(prompt):
+    # Tests user profile that contains only 1 line about their education but no lines of experience info or profile info
+    if "Please enter your university: " in prompt:
+        return "florida state university"
+    if "Please enter your major: " in prompt:
+        return ""
+    if "How many years did you attend Florida State University: " in prompt:
+        return ""
+    if "Please enter your degree: " in prompt:
+        return ""
+    if "Please enter your title: " in prompt:
+        return ""
+    if "Please enter a short description about yourself: " in prompt:
+        return ""
+    if "Please enter your experience title: " in prompt:
+        return "title"
+    if "Please enter your employer: " in prompt:
+        return "employer"
+    if "Please enter your start date: " in prompt:
+        return "start"
+    if "Please enter your end date: " in prompt:
+        return "end"
+    if "Please enter your location: " in prompt:
+        return "location"
+    if "Please enter your description: " in prompt:
+        return "desc"
+    if "Do you want to add another experience? (Y/N): " in prompt:
+        return "Y"
+    if "Do you want to see what your profile looks like (Y/N)? " in prompt:
+        return "Y"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_create_user_profile_V1(monkeypatch, capsys):
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_create_user_profile_V1)
+
+    # Call the create_user_profile function
+    create_user_profile("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the messages where the profile is sucessfully created and 
+    # shows the correct capitalization for the user's university and major and fully filled out info
+    assert "Profile created!" in captured.out
+    assert "Education created!" in captured.out
+    assert "Experience created!" in captured.out
+    assert "Username:  testuser" in captured.out
+    assert "Title:  3rd Year Computer Science Student" in captured.out
+    assert "About Me:  I am a third year computer science student that is looking for a job!" in captured.out
+    assert "University:  University Of South Florida" in captured.out
+    assert "Major:  Computer Science" in captured.out
+    assert "Degree:  Bachelors" in captured.out
+    assert "Years Attended:  3" in captured.out
+
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
+
+    assert title == "Intern"
+    assert employer == "Boeing"
+    assert location == "New York"
+    assert start_date == "October 1st, 2020"
+    assert end_date == "December 30th, 2021"
+    assert description == "Worked at Boeing as an intern to fix up airline website"
+
+    # Clean up test user profile
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
+
+
+def test_create_user_profile_V2(monkeypatch, capsys):
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_create_user_profile_V2)
+
+    # Call the create_user_profile function
+    create_user_profile("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the messages where the profile is sucessfully created and 
+    # shows the user's profile info and education info but with experience info empty
+    assert "Profile created!" in captured.out
+    assert "Education created!" in captured.out
+    assert "Experience created!" in captured.out
+    assert "Username:  testuser" in captured.out
+    assert "Title:  1st Year Biology Student" in captured.out
+    assert "About Me:  I am a first year biology student that is looking for a job!" in captured.out
+    assert "University:  University Of Florida" in captured.out
+    assert "Major:  Biology" in captured.out
+    assert "Degree:  Masters" in captured.out
+    assert "Years Attended:  6" in captured.out
+
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
+
+    assert title == ""
+    assert employer == ""
+    assert location == ""
+    assert start_date == ""
+    assert end_date == ""
+    assert description == ""
+
+    # Clean up test user profile
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
+
+
+def test_create_user_profile_V3(monkeypatch, capsys):
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_create_user_profile_V3)
+
+    # Call the create_user_profile function
+    create_user_profile("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the messages where the profile is sucessfully created and 
+    # shows the profile successfully created but with only 1 line of education info
+    assert "Profile created!" in captured.out
+    assert "Education created!" in captured.out
+    assert "Experience created!" in captured.out
+    assert "Username:  testuser" in captured.out
+    assert "Title:  " in captured.out
+    assert "About Me:  " in captured.out
+    assert "University:  University Of Central Florida" in captured.out
+    assert "Major:  " in captured.out
+    assert "Degree:  " in captured.out
+    assert "Years Attended:  " in captured.out
+
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
+
+    assert title == ""
+    assert employer == ""
+    assert location == ""
+    assert start_date == ""
+    assert end_date == ""
+    assert description == ""
+
+    # Clean up test user profile
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
+
+
+def test_create_user_profile_V4(monkeypatch, capsys):
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_create_user_profile_V4)
+
+    # Call the create_user_profile function
+    create_user_profile("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the messages where the profile is sucessfully created and 
+    # that it allows up to 3 past experiences to be created
+    assert "Profile created!" in captured.out
+    assert "Education created!" in captured.out
+    assert "Experience created!" in captured.out
+    assert "You have reached the maximum number of experiences!" in captured.out
+
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
+
+    assert title == "title"
+    assert employer == "employer"
+    assert location == "location"
+    assert start_date == "start"
+    assert end_date == "end"
+    assert description == "desc"
+
+    # Clean up test user profile
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
+
+
+def mock_update_user_profile(prompt):
+    # Tests user profile that will be updated with new values and fills in missing sections in previous
+    # version of the student's profile
+    if "Please enter your university: " in prompt:
+        return "university of south florida"
+    if "Please enter your major: " in prompt:
+        return "Business"
+    if "How many years did you attend University Of South Florida: " in prompt:
+        return "1"
+    if "Please enter your degree: " in prompt:
+        return "Bachelors"
+    if "Please enter your title: " in prompt:
+        return "1st Year Business Student"
+    if "Please enter a short description about yourself: " in prompt:
+        return "I am a first year business student that is looking for a job!"
+    if "Please enter your experience title: " in prompt:
+        return "Intern"
+    if "Please enter your employer: " in prompt:
+        return "Boeing"
+    if "Please enter your start date: " in prompt:
+        return "October 1st, 2020"
+    if "Please enter your end date: " in prompt:
+        return "December 30th, 2021"
+    if "Please enter your location: " in prompt:
+        return "New York"
+    if "Please enter your description: " in prompt:
+        return "Worked at Boeing as an intern to write a blog for their website"
+    if "Do you want to update another experience? (Y/N): " in prompt:
+        return "N"
+    if "Do you want to see what your profile looks like (Y/N)? " in prompt:
+        return "Y"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_update_user_profile(monkeypatch, capsys):
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_update_user_profile)
+
+    # Call the create_user_profile function
+    create_profile(
+        "testuser",
+        "University of South Florida",
+        "Computer Science",
+        "",
+        ""
+        )
+    create_education(
+        "testuser",
+        "University of South Florida",
+        "",
+        3
+        )
+    create_experience(
+        "testuser",
+        1,
+        "Intern",
+        "Boeing",
+        "October 1st, 2020",
+        "December 30th, 2021",
+        "New York",
+        "Worked at Boeing as an intern to write a blog for their website"
+        )
+    
+    # Call the create_user_profile function
+    create_user_profile("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the messages where the profile is sucessfully updated and 
+    # updates and fills in the remaining sections that the student wanted to add
+    assert "Profile updated!" in captured.out
+    assert "Education updated!" in captured.out
+    assert "Experience updated!" in captured.out
+    assert "Username:  testuser" in captured.out
+    assert "Title:  1st Year Business Student" in captured.out
+    assert "About Me:  I am a first year business student that is looking for a job!" in captured.out
+    assert "University:  University Of South Florida" in captured.out
+    assert "Major:  Business" in captured.out
+    assert "Degree:  Bachelors" in captured.out
+    assert "Years Attended:  1" in captured.out
+
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
+
+    assert title == "Intern"
+    assert employer == "Boeing"
+    assert location == "New York"
+    assert start_date == "October 1st, 2020"
+    assert end_date == "December 30th, 2021"
+    assert description == "Worked at Boeing as an intern to write a blog for their website"
+
+    # Clean up test user profile
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
