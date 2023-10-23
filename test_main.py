@@ -1635,7 +1635,7 @@ def mock_create_user_profile_V2(prompt):
         return "Y"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
-    
+
 
 def mock_create_user_profile_V3(prompt):
     # Tests user profile that contains only 1 line about their education but no lines of experience info or profile info
@@ -1669,7 +1669,7 @@ def mock_create_user_profile_V3(prompt):
         return "Y"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
-    
+
 
 def mock_create_user_profile_V4(prompt):
     # Tests user profile that contains only 1 line about their education but no lines of experience info or profile info
@@ -1715,14 +1715,17 @@ def test_create_user_profile_V1(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Assert that the messages where the profile is sucessfully created and 
+    # Assert that the messages where the profile is sucessfully created and
     # shows the correct capitalization for the user's university and major and fully filled out info
     assert "Profile created!" in captured.out
     assert "Education created!" in captured.out
     assert "Experience created!" in captured.out
     assert "Username:  testuser" in captured.out
     assert "Title:  3rd Year Computer Science Student" in captured.out
-    assert "About Me:  I am a third year computer science student that is looking for a job!" in captured.out
+    assert (
+        "About Me:  I am a third year computer science student that is looking for a job!"
+        in captured.out
+    )
     assert "University:  University Of South Florida" in captured.out
     assert "Major:  Computer Science" in captured.out
     assert "Degree:  Bachelors" in captured.out
@@ -1760,14 +1763,17 @@ def test_create_user_profile_V2(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Assert that the messages where the profile is sucessfully created and 
+    # Assert that the messages where the profile is sucessfully created and
     # shows the user's profile info and education info but with experience info empty
     assert "Profile created!" in captured.out
     assert "Education created!" in captured.out
     assert "Experience created!" in captured.out
     assert "Username:  testuser" in captured.out
     assert "Title:  1st Year Biology Student" in captured.out
-    assert "About Me:  I am a first year biology student that is looking for a job!" in captured.out
+    assert (
+        "About Me:  I am a first year biology student that is looking for a job!"
+        in captured.out
+    )
     assert "University:  University Of Florida" in captured.out
     assert "Major:  Biology" in captured.out
     assert "Degree:  Masters" in captured.out
@@ -1805,7 +1811,7 @@ def test_create_user_profile_V3(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Assert that the messages where the profile is sucessfully created and 
+    # Assert that the messages where the profile is sucessfully created and
     # shows the profile successfully created but with only 1 line of education info
     assert "Profile created!" in captured.out
     assert "Education created!" in captured.out
@@ -1850,7 +1856,7 @@ def test_create_user_profile_V4(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Assert that the messages where the profile is sucessfully created and 
+    # Assert that the messages where the profile is sucessfully created and
     # that it allows up to 3 past experiences to be created
     assert "Profile created!" in captured.out
     assert "Education created!" in captured.out
@@ -1920,18 +1926,9 @@ def test_update_user_profile(monkeypatch, capsys):
 
     # Call the create_user_profile function
     create_profile(
-        "testuser",
-        "University of South Florida",
-        "Computer Science",
-        "",
-        ""
-        )
-    create_education(
-        "testuser",
-        "University of South Florida",
-        "",
-        3
-        )
+        "testuser", "University of South Florida", "Computer Science", "", ""
+    )
+    create_education("testuser", "University of South Florida", "", 3)
     create_experience(
         "testuser",
         1,
@@ -1940,23 +1937,26 @@ def test_update_user_profile(monkeypatch, capsys):
         "October 1st, 2020",
         "December 30th, 2021",
         "New York",
-        "Worked at Boeing as an intern to write a blog for their website"
-        )
-    
+        "Worked at Boeing as an intern to write a blog for their website",
+    )
+
     # Call the create_user_profile function
     create_user_profile("testuser")
 
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Assert that the messages where the profile is sucessfully updated and 
+    # Assert that the messages where the profile is sucessfully updated and
     # updates and fills in the remaining sections that the student wanted to add
     assert "Profile updated!" in captured.out
     assert "Education updated!" in captured.out
     assert "Experience updated!" in captured.out
     assert "Username:  testuser" in captured.out
     assert "Title:  1st Year Business Student" in captured.out
-    assert "About Me:  I am a first year business student that is looking for a job!" in captured.out
+    assert (
+        "About Me:  I am a first year business student that is looking for a job!"
+        in captured.out
+    )
     assert "University:  University Of South Florida" in captured.out
     assert "Major:  Business" in captured.out
     assert "Degree:  Bachelors" in captured.out
@@ -1976,7 +1976,9 @@ def test_update_user_profile(monkeypatch, capsys):
     assert location == "New York"
     assert start_date == "October 1st, 2020"
     assert end_date == "December 30th, 2021"
-    assert description == "Worked at Boeing as an intern to write a blog for their website"
+    assert (
+        description == "Worked at Boeing as an intern to write a blog for their website"
+    )
 
     # Clean up test user profile
     delete_profile("testuser")
@@ -1984,24 +1986,19 @@ def test_update_user_profile(monkeypatch, capsys):
     delete_experience("testuser")
 
 
-
 def test_display_user_profile(monkeypatch, capsys):
-    
     create_user("test", "pwd123", "Test", "User", "Test U", "CS")
-    
-    
-    monkeypatch.setattr('builtins.input', lambda x: "Y")
-    
-    
+
+    monkeypatch.setattr("builtins.input", lambda x: "Y")
+
     display_user_profile("test")
-    
-    
+
     captured = capsys.readouterr()
     assert "Here's Test User's profile:" in captured.out
     assert "You have no profile" in captured.out
 
+
 def test_display_user_friend_profile(monkeypatch, capsys):
-    
     def mock_get_profile(username):
         return {
             "user": "friend",
@@ -2018,26 +2015,22 @@ def test_display_user_friend_profile(monkeypatch, capsys):
                     "location": "Tech City",
                     "date_started": "2015-01",
                     "date_ended": "2020-12",
-                    "description": "Worked on various tech projects."
+                    "description": "Worked on various tech projects.",
                 }
-            ]
+            ],
         }
 
-    monkeypatch.setattr('main.get_profile', mock_get_profile)
+    monkeypatch.setattr("main.get_profile", mock_get_profile)
 
-    
     def mock_draw_line(message):
         print(message)
 
-    monkeypatch.setattr('main.draw_line', mock_draw_line)
+    monkeypatch.setattr("main.draw_line", mock_draw_line)
 
-    
     display_user_friend_profile("friend")
 
-    
     captured = capsys.readouterr()
 
-    
     assert "FRIEND'S PROFILE" in captured.out
     assert "Engineer" in captured.out
     assert "Test about me section." in captured.out
@@ -2054,21 +2047,17 @@ def test_display_user_friend_profile(monkeypatch, capsys):
 
 
 def test_display_friend_no_friends(monkeypatch, capsys):
-    
-    monkeypatch.setattr('main.list_of_friends', lambda x: False)
-    
-    
-    monkeypatch.setattr('builtins.input', lambda _: "n")
-    
-    
+    monkeypatch.setattr("main.list_of_friends", lambda x: False)
+
+    monkeypatch.setattr("builtins.input", lambda _: "n")
+
     display_friend_profile("test")
-    
-    
-    captured = capsys.readouterr()  
+
+    captured = capsys.readouterr()
     assert "You have no friends!" in captured.out
 
+
 def mock_get_profile(username):
-    
     if username == "friend1":
         return {
             "user": "friend1",
@@ -2076,22 +2065,16 @@ def mock_get_profile(username):
             "major": "Some Major",
             "title": "Some Title",
             "about": "About friend1",
-            
         }
     return None
 
 
-
-
 def test_display_friend_invalid(monkeypatch, capsys):
-
-    
     def mock_friends(username):
         return [("friend1",), ("friend2",)]
-    
-    monkeypatch.setattr('main.list_of_friends', mock_friends)
 
-    
+    monkeypatch.setattr("main.list_of_friends", mock_friends)
+
     def mock_get_profile(username):
         if username == "friend1":
             return {
@@ -2100,17 +2083,15 @@ def test_display_friend_invalid(monkeypatch, capsys):
                 "major": "Some Major",
                 "title": "Some Title",
                 "about": "About friend1",
-                
             }
         return None
 
-    monkeypatch.setattr('main.get_profile', mock_get_profile)
+    monkeypatch.setattr("main.get_profile", mock_get_profile)
 
-    
-    monkeypatch.setattr('builtins.input', lambda x: "x")
-
-    
+    input_values = ["x", "n", "n"]
+    monkeypatch.setattr("builtins.input", lambda x: input_values.pop(0))
     display_friend_profile("test")
 
     captured = capsys.readouterr()
     assert "Character not identified" in captured.out
+    monkeypatch.setattr("main.display_friend_profile", Mock())

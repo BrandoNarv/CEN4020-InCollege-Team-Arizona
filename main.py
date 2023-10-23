@@ -1062,7 +1062,11 @@ def create_user_profile(username):
                 count += 1
                 stop = ""
                 while stop not in ["Y", "N"]:
-                    stop = input("Do you want to add another experience? (Y/N): ").strip().upper()
+                    stop = (
+                        input("Do you want to add another experience? (Y/N): ")
+                        .strip()
+                        .upper()
+                    )
                     if stop == "N":
                         count = 3
                         break
@@ -1129,7 +1133,11 @@ def create_user_profile(username):
                 count += 1
                 stop = ""
                 while stop not in ["Y", "N"]:
-                    stop = input("Do you want to update another experience? (Y/N): ").strip().upper()
+                    stop = (
+                        input("Do you want to update another experience? (Y/N): ")
+                        .strip()
+                        .upper()
+                    )
                     if stop == "N":
                         count = 3
                         break
@@ -1152,7 +1160,11 @@ def create_user_profile(username):
 
 def display_choice(username):
     while True:
-        user_input = input("Do you want to see what your profile looks like (Y/N)? ").strip().upper()
+        user_input = (
+            input("Do you want to see what your profile looks like (Y/N)? ")
+            .strip()
+            .upper()
+        )
         if user_input == "Y":
             display_user_profile(username)
             break
