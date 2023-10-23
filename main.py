@@ -1218,10 +1218,10 @@ def display_friend_profile(username):
     else:
         print("Here's a list of your friends:")
         for i, name in enumerate(friend_list):
-            if not get_profile(name[1]):
+            if len(name) > 1 and not get_profile(name[1]):
                 print(f"{name[1]}")
             else:
-                print(f"{name[1]} - PROFILE")
+                print(f"{name[0]} - PROFILE")
         choice = input(
             "Would you like to display the profile from one of these friends? (y/n):"
         )
