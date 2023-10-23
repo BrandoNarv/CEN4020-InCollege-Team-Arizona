@@ -1,3 +1,5 @@
+# Imports /////////////////////////////////////////////////////////////////
+#importing Packages needed to run the program
 import shutil
 import string
 import sys
@@ -5,10 +7,16 @@ import time
 
 from database_helper import *
 
+# Major Global Variables /////////////////////////////////////////////////////////////////
+
 # this will make the login attempts be unlimited and make it easier for testing for unlimited attempts right now
 LOGIN_NUM_LIMIT = 1000000000
+# Number of users, or accounts, that can be made in this project
 USER_NUM_LIMIT = 10
 
+# Print Preset  /////////////////////////////////////////////////////////////////
+
+#Python "Set" Data type for features: this is a quick variable to reference when you need to print out the main menu
 FEATURES = {
     "a": "Search for a job",
     "b": "Find someone you know",
@@ -20,11 +28,12 @@ FEATURES = {
     "h": "Log Out",
 }
 
+#Python "Set" Data type for Job_Options: this is a quick variable to reference when printing out the job options
 JOB_OPTIONS = {
     "a": "Post a job",
     "b": "Go back",
 }
-
+#Python "Set" Data type for Friend_Options: this is a quick variable to reference when printing out the friend search options
 FRIEND_OPTIONS = {
     "a": "Find by last name",
     "b": "Find by university",
@@ -32,12 +41,14 @@ FRIEND_OPTIONS = {
     "d": "Go back",
 }
 
+#Python "Set" Data type for Friend Request: this is a quick variable to reference when printing out the friend request options
 FRIEND_REQUEST = {
     "a": "Accept",
     "r": "Reject",
     "b": "Go Back",
 }
 
+#Python "Set" Data type for Friend Request: this is a quick variable to reference when printing out the friend request options
 PROFILE_OPTIONS = {
     "a": "Create or Update Your Profile",
     "b": "Display Your Profile",
@@ -45,12 +56,14 @@ PROFILE_OPTIONS = {
     "d": "Go Back",
 }
 
+#Python "Set" Data type for Navigation Link: this is a quick variable to reference when printing out the Navigation link options
 NAVIGATION_LINKS_GROUP = {
     "a": "Useful Links",
     "b": "InCollege Important Links",
     "c": "Go back",
 }
 
+#Python "Set" Data type for Navigation Link: this is a quick variable to reference when printing out the Navigation link options
 USEFUL_LINKS_GROUP = {
     "a": "General",
     "b": "Browse InCollege",
@@ -59,6 +72,7 @@ USEFUL_LINKS_GROUP = {
     "e": "Go back",
 }
 
+#Python "Set" Data type for Important Links: this is a quick variable to reference when printing out the Important link options
 INCOLLEGE_IMPORTANT_LINKS_GROUP = {
     "a": "A Copyright Notice",
     "b": "About",
@@ -71,7 +85,8 @@ INCOLLEGE_IMPORTANT_LINKS_GROUP = {
     "i": "Languages",
     "j": "Go back",
 }
-
+#Python "Set" Data type for General Link: this is a quick variable to reference when printing out the General link options
+#This version is for when the user isn't signed in
 NOT_SIGNED_IN_GENERAL_LINKS_GROUP = {
     "a": "Sign Up",
     "b": "Help Center",
@@ -83,6 +98,8 @@ NOT_SIGNED_IN_GENERAL_LINKS_GROUP = {
     "h": "Go back",
 }
 
+#Python "Set" Data type for Navigation Link: this is a quick variable to reference when printing out the General link options
+#This version is for when the user is signed in
 SIGNED_IN_GENERAL_LINKS_GROUP = {
     "a": "Help Center",
     "b": "About",
@@ -93,22 +110,39 @@ SIGNED_IN_GENERAL_LINKS_GROUP = {
     "g": "Go back",
 }
 
+#Python "Set" Data type for Guest Controls: this is a quick variable to reference when printing out Guest options
 GUEST_CONTROLS = {"a": "Email", "b": "SMS", "c": "Target_Advertising"}
 
+#Python "Set" Data type for turning off and on: this is a quick variable to reference when printing out turning off and on options
 TURN_ON_OFF = {"a": "Turn On", "b": "Turn Off"}
 
+#Python "list" Data type for skills: this is a quick variable to reference when printing out skills you can learn
 SKILLS = ["Python", "Java", "C++", "JavaScript", "SQL"]
+
+#Python "Set" Data type for Languages: this is a quick variable to reference when printing out language options
 LANGUAGES = {"a": "English", "b": "Spanish"}
 
+# Minor Global Variables /////////////////////////////////////////////////////////////////
+
+#Login limit should start at false
 limit_login = False
+#Login attempts should start at zero
 login_attempts = 0
+#User should be signed out at start
 signed_in = False
+#Language should not be specified yet before settings
 language = ""
+#Email is shut off by default
 email = 0
+#SMS is shut off by default
 SMS = 0
+#Target Ads is shut off by default
 target_ads = 0
 
+# Functions ///////////////////////////////////////////////////////////////////////
 
+#Function that prompts the user if they'd like to look for someone
+#This is so people can find their friend before signing in
 def prompt_person_search():
     """Ask user if they want to search for someone before logging in"""
     decision = (
@@ -117,40 +151,55 @@ def prompt_person_search():
         .upper()
     )
 
+    #If yes, do name search function
     if decision == "Y":
         name_search()
+    #If no, skip to log in
     elif decision == "N":
         return False
     else:
+        #If no matching option, retry this function for an appropriate response
         print("Invalid input, please try again")
         prompt_person_search()
 
-
+#Function that allow you to log in, or atleast attempt to
 def login():
     """Get username and password from user and check if they match a user in the database"""
     draw_line(message="Login")
     username = input("Enter your username: ").strip()
     password = input("Enter your password: ").strip()
 
+    #If you succeed in logging in, then you're signed in under that username
     if check_login(username, password):
         print("You have successfully logged in")
         global signed_in
         signed_in = True
 
         return username
+
+    #If you fail, you can try to log in again
+    #If you fail too many times, then you could be locked out (not implemented yet)
     else:
         print("Incorrect username / password, please try again")
         if try_again():
             return login()
 
-
+#Function for signing up for a new account
 def signup():
     """Signup a new user if the username is not already taken and password meets requirements"""
     db_num_users = get_num_of_users()
+
+    #If user limit is reached, return a none type
     if reached_user_limit(db_num_users):
         return None
+
+    #Sign in header is printed
     draw_line(message="Sign Up")
+
+    #Prompt user for username
     username = input("Enter your username: ").strip()
+
+    #If user already exist, then restart sign up to prompt different username
     if does_username_exist(username):
         print("Username already exists, please try again")
         return signup()
@@ -160,18 +209,26 @@ def signup():
           one uppercase letter, one digit, and one special character"""
     )
 
+    #Prompt for password
     password_in = input("Enter your password: ").strip()
 
+    #Test the password to see if it works properly
     password = validate_password(password_in)
+
+    #If password returns none, then keep asking for a valid password
+    # This will occur untils a valid password is entered
     while password is None:
         password_in = input("Enter your password: ").strip()
         password = validate_password(password_in)
 
+    #Prompt user for first name, last name, university, and major
     firstname = input("Please insert your first name: ")
     lastname = input("Please insert your last name: ")
     university = input("Please insert the university you are attending: ")
     major = input("Please insert your major: ")
 
+    #If you can create a user with no problems, then sign up is successful
+    #Sign them in, set language to english by default, and set email, SMS, and Ads
     if create_user(username, password, firstname, lastname, university, major):
         print("Signup successful!")
         global signed_in
@@ -181,11 +238,13 @@ def signup():
         SMS = 1
         target_ads = 1
         return username
+
+    #Else, its likely a username error: so restart signup
     else:
         print("Username already exists, please try again")
         return signup()
 
-
+#Function checks to see if job limit is exceeded.
 def reached_job_limit(num_jobs):
     """Check if jobs are as many as users"""
     if num_jobs >= USER_NUM_LIMIT:
@@ -193,7 +252,7 @@ def reached_job_limit(num_jobs):
         return True
     return False
 
-
+#Function checks to see if user limit is exceeded.
 def reached_user_limit(num_users):
     """Check if users are as many as permitted"""
     if num_users == USER_NUM_LIMIT:
@@ -201,9 +260,12 @@ def reached_user_limit(num_users):
         return True
     return False
 
+#Function checks to see if password meets requirements for sign up.
 
 def validate_password(input_p):
     """Check if password meets requirements"""
+
+    #Sends a none type if it fails the password check
     if not (
         8 <= len(input_p) <= 12
         and any(char.isupper() for char in input_p)
@@ -212,25 +274,35 @@ def validate_password(input_p):
     ):
         print("Password does not meet requirements, please try again")
         return None
+
+    #Sends back input type if it succeeds the password check
     return input_p
 
-
+#Function that acts as the main menu.
 def choose_features(username):
     """Display features and get user's choice"""
     draw_line(message="Features")
     print(f"Hi {username}! What would you like do?")
+
+    #Prints out features of Incollege
     for key, value in FEATURES.items():
         print(f"{key}. {value}")
+
+    #prompt user to select a feature
     feature_choice = input(f"Choose one of {list(FEATURES.keys())}: ").strip().lower()
 
+    #If input matches feature, then go to proper feature
     if feature_choice in FEATURES:
         print(f"You selected {FEATURES[feature_choice]}")
         feature_direct(feature_choice, username)
+
+    #else repeat this function again for a proper feature input
     else:
         print("Feature ID not identied. Please try again")
         return choose_features(username)
 
-
+#Function designed to direct user to the proper feature
+#Feature traveled to changes based on input
 def feature_direct(feature_choice, username):
     """Direct user to the feature they chose"""
     if feature_choice == "a":
@@ -250,36 +322,47 @@ def feature_direct(feature_choice, username):
     elif feature_choice == "h":
         logout(username)
 
-
+#Function designed to help user search for jobs
 def job_search(username):
     """Job search page"""
     draw_line(message="JOB_OPTIONS")
+
+    #Prompt and list options for job search
     print("What would you like to do with jobs?")
     for key, value in JOB_OPTIONS.items():
         print(f"{key}. {value}")
     feature_choice = input(f"Choose one of {list(JOB_OPTIONS.keys())}:").strip().lower()
 
+    #If feature a is chosen, then post job
     if feature_choice == "a":
         job_posting(username)
+
+    #Else if feature b is chosen, then prompt to go back to feature select
     elif feature_choice == "b":
         if go_back():
             choose_features(username)
 
-
+#Function to post a job
 def job_posting(username):
     """Post a job page"""
     db_num_jobs = get_num_of_jobs()
+
+    #Return none if job limit has been reached
     if reached_job_limit(db_num_jobs):
         return None
 
+    #Print job posting line
     draw_line(message="JOB_POSTING")
 
+    #Prompt user for job's title, description, employer, location, and salary
     job_title = input("Please enter the job's title: ")
     job_description = input("Please enter the job's description: ")
     job_employer = input("Please enter the job's employer: ")
     job_location = input("Please enter the job's location: ")
     job_salary = input("Please enter the job's salary: ")
 
+    #Use create job function to use input data for a job entry
+    #*** This function is in the database_helper
     create_job(
         job_title,
         job_description,
@@ -290,16 +373,20 @@ def job_posting(username):
         get_last_name(username),
     )
 
+    #Inform user that the job has been created
     print(
         "\nJob created: Thank You for posting. We hope you'll find great employees!\n"
     )
 
+    #Go back to feature select by default
     choose_features(username)
 
-
+#Function that helps you search for friends
 def friend_search(username):
     """Friend search page"""
     draw_line(message="FRIEND_SEARCH")
+
+    #Prompt user for how they'd like to search for friends
     print("How would you like to search for friends?")
     for key, value in FRIEND_OPTIONS.items():
         print(f"{key}. {value}")
@@ -307,6 +394,8 @@ def friend_search(username):
         input(f"Choose one of {list(FRIEND_OPTIONS.keys())}:").strip().lower()
     )
 
+    #Select appropriate search based on input, then return to feature select
+    #User can also go back instead of searching
     if feature_choice == "a":
         last_name_search(username)
         choose_features(username)
@@ -320,62 +409,80 @@ def friend_search(username):
         if go_back():
             choose_features(username)
 
-
+#Function designed to search the name of someone you knoe
 def name_search():
     """name search page"""
     draw_line(message="NAME_SEARCH")
 
+    #prompt the user for a first and last name
     friend_firstname = input("Please enter your friend's first name: ")
     friend_lastname = input("Please enter your friend's last name: ")
 
+    #Use search name function to see if the person exist
+    #*** This function is in database_helper
     result = search_name(friend_firstname, friend_lastname)
 
+    #If result works, then inform the user they exist.
     if result:
         print(
             f"\n{friend_firstname} {friend_lastname} is an existing user on inCollege."
         )
+
+    #Else inform the user they don't exist.
     else:
         print(
             f"\n{friend_firstname} {friend_lastname} is not yet an existing user on inCollege."
         )
 
-
+#Function searches for name based on last name
 def last_name_search(username):
     """last name search page"""
     draw_line(message="LAST_NAME_SEARCH")
 
+    #Prompt user for last name
     friend_lastname = input("Please enter a last name: ")
 
+    #Check to see if a user has this last name
     friend_username = get_username_from_last_name(friend_lastname)
 
+    #If you find them, then you can prompt the user to send them as a friend request
     if friend_username != False:
         print(f"\nPrinting usernames of users with the last name {friend_lastname}")
         print(f"\n{', '.join(friend_username)}")
         choice = input(
             "Do you want to request to connect with someone from this list? y/n?: "
         ).lower()
+
+        #If you select yes, send them a friend request
         if choice == "y":
             send_friend_request(username)
+        #If you select no or other options, then prompt user to go back to feature select
         else:
             if go_back():
                 choose_features(username)
+    #Else, upon a failed search, inform the user that no account has that last name
     else:
         print(
             f"\nThere are no users that have the last name {friend_lastname} on inCollege."
         )
 
-
+#Function that searches users based off university
 def university_search(username):
     """university search page"""
     draw_line(message="UNIVERSITY_SEARCH")
 
+    #Prompt the user for a university to search for
     friend_university = input("Please enter a university: ")
 
+    #Check the university, then compare the users with this university
     friend_username = get_username_from_university(friend_university)
 
+    #If at least one student is associated with this unversity, show the list of students
     if friend_username != False:
         print(f"\nPrinting usernames of users attending {friend_university}")
         print(f"\n{', '.join(friend_username)}")
+
+        #Prompt user
         choice = input(
             "Do you want to request to connect with someone from this list? y/n?: "
         ).lower()
