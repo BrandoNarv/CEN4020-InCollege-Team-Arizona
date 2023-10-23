@@ -168,7 +168,7 @@ def update_profile(username, university, major, title, about):
     except sqlite3.Error as error:
         print("Failed to update profile from the sqlite table:", error)
         return False
-    
+
 
 def delete_profile(username):
     """Returns True if the user was successfully deleted, False otherwise"""
@@ -246,7 +246,7 @@ def delete_experience(username):
     except sqlite3.Error as error:
         print("Failed to delete experience from the sqlite table:", error)
         return False
-    
+
 
 def create_education(user, school_name, degree, years_attended):
     """Returns True if the education was successfully created, False otherwise"""
@@ -294,7 +294,7 @@ def delete_education(username):
     except sqlite3.Error as error:
         print("Failed to delete education from the sqlite table:", error)
         return False
-    
+
 
 def create_user(username, password, first, last, university, major):
     """Returns True if the user was successfully created, False otherwise"""
@@ -528,10 +528,14 @@ def add_to_friend_list(username, friend_username):
     """Returns True if the friend was successfully added into the database, False otherwise"""
     try:
         with conn:
-            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
-                      {"user": username, "friend_user": friend_username})
-            c.execute("INSERT INTO friends_list VALUES (:user, :friend_user)",
-                      {"user": friend_username, "friend_user": username})
+            c.execute(
+                "INSERT INTO friends_list VALUES (:user, :friend_user)",
+                {"user": username, "friend_user": friend_username},
+            )
+            c.execute(
+                "INSERT INTO friends_list VALUES (:user, :friend_user)",
+                {"user": friend_username, "friend_user": username},
+            )
         return True
     except sqlite3.Error as error:
         print("Failed to add friend to the sqlite table:", error)
