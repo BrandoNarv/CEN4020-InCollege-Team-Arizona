@@ -31,8 +31,19 @@ FEATURES = {
 #Python "Set" Data type for Job_Options: this is a quick variable to reference when printing out the job options
 JOB_OPTIONS = {
     "a": "Post a job",
-    "b": "Go back",
+    "b": "View Jobs",
+    "c": "Go back",
 }
+
+#Python "Set" Data type for Job_LISTING: this is a quick variable to reference when printing out the ways to list job
+JOB_LISTING = {
+    "a": "List all jobs available",
+    "b": "List only applied jobs",
+    "c": "List only not applied jobs",
+    "d": "List only starred jobs",
+    "e": "Go back",
+}
+
 #Python "Set" Data type for Friend_Options: this is a quick variable to reference when printing out the friend search options
 FRIEND_OPTIONS = {
     "a": "Find by last name",
@@ -337,8 +348,12 @@ def job_search(username):
     if feature_choice == "a":
         job_posting(username)
 
-    #Else if feature b is chosen, then prompt to go back to feature select
+    #Else if feature b is chosen, then prompt to g
     elif feature_choice == "b":
+        job_listing(username)
+      
+    #Else if feature c is chosen, then prompt to go back to feature select
+    elif feature_choice == "c":
         if go_back():
             choose_features(username)
 
@@ -380,6 +395,96 @@ def job_posting(username):
 
     #Go back to feature select by default
     choose_features(username)
+
+#Function designed to let user decide on how to view jobs
+def job_listing(username):
+    """Job list page"""
+    draw_line(message="JOB_Listing")
+
+    print("How would you like to view your jobs?")
+    for key, value in JOB_LISTING.items():
+        print(f"{key}. {value}")
+    feature_choice = (
+        input(f"Choose one of {list(JOB_LISTING.keys())}:").strip().lower()
+    )
+
+    #Select appropriate search based on input
+    #User can also go back instead of searching
+    if feature_choice == "a":
+        listing_all_jobs(username)
+        choose_features(username)
+    elif feature_choice == "b":
+        print("Under construction")
+        choose_features(username)
+    elif feature_choice == "c":
+        print("Under construction")
+        choose_features(username)
+    elif feature_choice == "d":
+        print("Under construction")
+        choose_features(username)
+    elif feature_choice == "e":
+        if go_back():
+            choose_features(username)
+
+    if go_back():
+       choose_features(username)
+
+
+#Function designed to list all available jobs
+def listing_all_jobs(username):
+  """List all jobs page"""
+  draw_line(message="LIST_ALL_JOBS") 
+  #Get all jobs from database
+  all_jobs = all_jobs_list(username)
+  
+  #Print all jobs
+  if all_jobs != False:
+    print("\nPrinting all jobs within the system")
+    print(f"\n{', '.join(all_jobs)}")
+    print("\n")
+    choice = input(
+        "Do you want to receive information about a job from this list? y/n?: "
+    ).lower()
+
+    #If you select yes, send them a friend request
+    if choice == "y":
+        get_job_info(username)
+    #If you select no or other options, then prompt user to go back to feature select
+    else:
+        if go_back():
+            choose_features(username)
+  #Else, upon a failed search, inform the user that no account has that last name
+  else:
+    print(
+        "\nThere are no jobs opening on inCollege."
+    )
+    
+
+#Function sends friend request out to a specific user
+def get_job_info(username):
+    """Get the information from the job the user selects"""
+    job_title = input("\nEnter the title of the job you want to learn about: ")
+
+    #Check if the user exists
+    job_info = get_job(job_title)
+
+    #If the user exists, inform the user that the request has been sent
+    if job_info:
+        print("\nPrinting job info for this title:")
+        print(f"\nTitle: {job_info[0]}")
+        print(f"Description: {job_info[1]}")
+        print(f"Employer: {job_info[2]}")
+        print(f"Location: {job_info[3]}")
+        print(f"Salary: {job_info[4]}")
+        print("\nReturning to main menu\n")
+
+    #Else, inform the user that the user does not exist
+    else:
+        retry = input("Invalid input, please try again.")
+        get_job_info(username)
+
+
+
 
 #Function that helps you search for friends
 def friend_search(username):
