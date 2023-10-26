@@ -33,7 +33,7 @@ c.execute(
 
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends (
-    
+
           user text,
           friend_user text 
 
@@ -607,3 +607,29 @@ def delete_friend_from_list(username, friend_username):
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
         return False
+
+def all_jobs_list(username):
+  """Returns all jobs saved so far, and returns False if no jobs are saved"""
+  c.execute(
+      "SELECT * FROM jobs" 
+  )
+  jobs = c.fetchall()
+
+  if jobs:
+      return [jobs[0] for jobs in jobs]
+  else:
+      return False
+
+#Function gets the info of the job that matches the title searched
+def get_job(job_title):
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT * FROM jobs WHERE title=:title",
+    {"title": job_title,},
+  )
+  info = c.fetchone()
+
+  if info:
+      return info
+  else:
+      return False
