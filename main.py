@@ -558,7 +558,7 @@ def apply_for_job(username):
         ).lower()
 
         #If user selects yes, peform the send application function
-        if confirm_apply == "y" or confirm_apply == "Y":
+        if confirm_apply == "y":
           send_application(username, job_title)
 
 
@@ -1885,11 +1885,11 @@ def go_back():
     decision = input("Do you want to go back (Y / N)? ").strip().upper()
 
     #if user wants to go back, return True
-    if decision == "Y" or decision == 'y':
+    if decision == "Y":
         return True
 
     #else if user wants to log out, return False
-    elif decision == "N" or decision == 'n':
+    elif decision == "N":
         return False
 
     #else, inform user of invalid input and repeat this function
