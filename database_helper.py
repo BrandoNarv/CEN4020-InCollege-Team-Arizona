@@ -639,9 +639,9 @@ def all_jobs_list(username):
   jobs = c.fetchall()
 
   if jobs:
-      return [jobs[0] for jobs in jobs]
+      return [job[0] for job in jobs]
   else:
-      return False
+      return []
 
 #Function gets the info of the job that matches the title searched
 def get_job(job_title):
@@ -716,6 +716,6 @@ def applied_jobs_list(username):
   jobs = c.fetchall()
 
   if jobs:
-    return [jobs[0] for jobs in jobs]
+    return [job[0] for job in jobs]
   else:
-    return False
+    return []
