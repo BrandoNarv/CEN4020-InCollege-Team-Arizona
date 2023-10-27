@@ -113,8 +113,8 @@ def mock_try_again_input(prompt):
 def mock_features_input(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
+    if "Choose one of ['a', 'b', 'c', 'd']:" in prompt:
+        return "d"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
@@ -1212,13 +1212,10 @@ def delete_friend_request_helper(monkeypatch, capsys):
 # Mocks quiting the program if network has no friends
 def mock_quit_from_network_input_V1(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "Y"
 
 
 # Mocks quiting the program if you don't remove friends
@@ -1239,13 +1236,10 @@ def mock_quit_from_network_input_V3(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Mocks sending a friend request and then quit
@@ -1272,13 +1266,10 @@ def mock_accept_request_input(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Mocks rejecting a friend request and then quit
@@ -1290,13 +1281,10 @@ def mock_delete_request_input(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Test to see if friends list returns empty and informs the user
