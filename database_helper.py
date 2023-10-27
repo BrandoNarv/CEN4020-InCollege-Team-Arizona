@@ -692,6 +692,21 @@ def search_application(username,job_title):
       return False
 
 
+def user_made_job(first,last,job_title):
+
+  """checks if job belongs to user. If so, they can't apply for it"""
+  c.execute(
+    "SELECT * FROM jobs WHERE first=:first AND last=:last AND title=:title",
+  {"first": first,"last": last,"title":job_title},
+  )
+  info = c.fetchone()
+
+  if info:
+    return True
+  else:
+    return False
+
+
 def applied_jobs_list(username):
   """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
   c.execute(
