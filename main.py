@@ -31,8 +31,9 @@ FEATURES = {
 #Python "Set" Data type for Job_Options: this is a quick variable to reference when printing out the job options
 JOB_OPTIONS = {
     "a": "Post a job",
-    "b": "View Jobs",
-    "c": "Go back",
+    "b": "Apply for a Job",
+    "c": "View Jobs",
+    "d": "Go back",
 }
 
 #Python "Set" Data type for Job_LISTING: this is a quick variable to reference when printing out the ways to list job
@@ -40,7 +41,7 @@ JOB_LISTING = {
     "a": "List all jobs available",
     "b": "List only applied jobs",
     "c": "List only not applied jobs",
-    "d": "List only starred jobs",
+    "d": "List only saved jobs",
     "e": "Go back",
 }
 
@@ -348,12 +349,16 @@ def job_search(username):
     if feature_choice == "a":
         job_posting(username)
 
-    #Else if feature b is chosen, then prompt to g
+    #Else if feature b is chosen, then list all jobs by default
     elif feature_choice == "b":
+        job_select(username)
+
+    #Else if feature c is chosen, then go to job listings
+    elif feature_choice == "c":
         job_listing(username)
       
     #Else if feature c is chosen, then prompt to go back to feature select
-    elif feature_choice == "c":
+    elif feature_choice == "d":
         if go_back():
             choose_features(username)
 
@@ -399,9 +404,9 @@ def job_posting(username):
 #Function designed to let user decide on how to view jobs
 def job_listing(username):
     """Job list page"""
-    draw_line(message="JOB_Listing")
+    draw_line(message="JOB_LISTING")
 
-    print("How would you like to view your jobs?")
+    print("How would you like to view the jobs listed?")
     for key, value in JOB_LISTING.items():
         print(f"{key}. {value}")
     feature_choice = (
@@ -411,13 +416,11 @@ def job_listing(username):
     #Select appropriate search based on input
     #User can also go back instead of searching
     if feature_choice == "a":
-        listing_all_jobs(username)
-        choose_features(username)
+        list_all_jobs(username)
     elif feature_choice == "b":
-        print("Under construction")
-        choose_features(username)
+        list_applied_jobs(username)
     elif feature_choice == "c":
-        print("Under construction")
+        list_unapplied_jobs(username)
         choose_features(username)
     elif feature_choice == "d":
         print("Under construction")
@@ -425,30 +428,98 @@ def job_listing(username):
     elif feature_choice == "e":
         if go_back():
             choose_features(username)
-
-    if go_back():
-       choose_features(username)
+    else: 
+        if go_back():
+          choose_features(username)
 
 
 #Function designed to list all available jobs
-def listing_all_jobs(username):
-  """List all jobs page"""
+def list_all_jobs(username):
+  """job selection page"""
   draw_line(message="LIST_ALL_JOBS") 
   #Get all jobs from database
   all_jobs = all_jobs_list(username)
-  
-  #Print all jobs
+
+  #Print all jobs and prompt user if they wish to apply to any of the jobs listed
   if all_jobs != False:
-    print("\nPrinting all jobs within the system")
+    print("\nListing all jobs within the system:")
     print(f"\n{', '.join(all_jobs)}")
     print("\n")
-    choice = input(
-        "Do you want to receive information about a job from this list? y/n?: "
+    choose_features(username)
+
+  else:
+    print("\nThere are no jobs opening on inCollege.")
+    choose_features(username)
+
+
+def list_applied_jobs(username):
+  """job selection page"""
+  draw_line(message="LIST_APPLIED_JOBS") 
+  #Get all jobs from database
+  applied_jobs = applied_jobs_list(username)
+
+  #Print all jobs and prompt user if they wish to apply to any of the jobs listed
+  if applied_jobs != False:
+    print("\nListing all jobs you've applied for:")
+    print(f"\n{', '.join(applied_jobs)}")
+    print("\n")
+    choose_features(username)
+
+  else:
+    print("\nThere are no jobs you've applied for.")
+    choose_features(username)
+
+
+def list_unapplied_jobs(username):
+  """job selection page"""
+  draw_line(message="LIST_UNAPPLIED_JOBS") 
+  #Get all jobs from database
+  applied_jobs = applied_jobs_list(username)
+
+  if applied_jobs != False:
+    s = set(applied_jobs)
+    unapplied_jobs = [job for job in all_jobs_list(username) if job not in s]
+
+    #Print all jobs and prompt user if they wish to apply to any of the jobs listed
+    if unapplied_jobs:
+      print("\nListing all jobs you have NOT applied for:")
+      print(f"\n{', '.join(unapplied_jobs)}")
+      print("\n")
+      choose_features(username)
+
+    else:
+      print("\nThere are no jobs you have NOT applied for.")
+      choose_features(username)
+  else:
+    all_jobs = all_jobs_list(username)
+    print("\nListing all jobs you have NOT applied for:")
+    print(f"\n{', '.join(all_jobs)}")
+    print("\n")
+    choose_features(username)
+
+  
+
+#Function designed to select a job to apply (list all available jobs)
+def job_select(username):
+  """job selection page"""
+  draw_line(message="JOB_SELECT") 
+  #Get all jobs from database
+  all_jobs = all_jobs_list(username)
+  
+  #Print all jobs and prompt user if they wish to apply to any of the jobs listed
+  if all_jobs != False:
+    print("\nHere are all jobs available:")
+    print(f"\n{', '.join(all_jobs)}")
+    print("\n")
+    view_info = input(
+        "Do you want to apply to any of the jobs on this list? y/n?: "
     ).lower()
 
-    #If you select yes, send them a friend request
-    if choice == "y":
-        get_job_info(username)
+    #If user selects yes, have them search for the job
+    if view_info == "y" or view_info == "Y":
+        apply_for_job(username)
+      
+    
     #If you select no or other options, then prompt user to go back to feature select
     else:
         if go_back():
@@ -461,29 +532,78 @@ def listing_all_jobs(username):
     
 
 #Function sends friend request out to a specific user
-def get_job_info(username):
-    """Get the information from the job the user selects"""
-    job_title = input("\nEnter the title of the job you want to learn about: ")
+def apply_for_job(username):
+
+    draw_line(message="JOB_CONFIRM") 
+    """Promopt the user to search by job title , inform them, and ask for confirmation"""
+    job_title = input("\nEnter the title of the job you want to apply for: ")
 
     #Check if the user exists
     job_info = get_job(job_title)
 
     #If the user exists, inform the user that the request has been sent
     if job_info:
-        print("\nPrinting job info for this title:")
+        print("\nThis is the current job information for this title:")
         print(f"\nTitle: {job_info[0]}")
         print(f"Description: {job_info[1]}")
         print(f"Employer: {job_info[2]}")
         print(f"Location: {job_info[3]}")
         print(f"Salary: {job_info[4]}")
-        print("\nReturning to main menu\n")
+        print("\n")
+
+        
+
+        confirm_apply = input(
+          "Confirm this job and send the application? y/n?: "
+        ).lower()
+
+        #If user selects yes, peform the send application function
+        if confirm_apply == "y" or confirm_apply == "Y":
+          send_application(username, job_title)
+
+
+        #If you select no or other options, then prompt user to go back to feature select
+        else:
+          if go_back():
+              choose_features(username)
+    
+  
 
     #Else, inform the user that the user does not exist
     else:
-        retry = input("Invalid input, please try again.")
-        get_job_info(username)
+        print("There is no job with that title, please try again.")
+        job_select(username)
 
 
+
+def send_application(username, job_title):
+
+  #First, check and see if the user has already applied to this job
+  application_check = search_application(username, job_title)
+
+  #If the user has applied to this job, inform them that they have already applied
+  if application_check is True:
+    print("\nYou have already applied to this job.")
+    choose_features(username)
+    
+  #If the user has not applied to this job, then send the application
+  elif application_check is False:
+
+    print("\n")
+    graduation = input("Please enter your graduation year(mm/dd/yyyy): ")
+    print("\n")
+    start = input("Please enter your predicted start date(mm/dd/yyyy): ")
+    print("\n")
+    description = input("Please explain why you'd be a great fit for this job: ")
+    print("\n")
+    verify_apply = create_application(username, job_title, graduation, start, description)
+    
+    #If the user has applied, inform them that their application has been sent
+    if verify_apply:
+      print("Application sent. We wish you luck on obtaining the position!\n")
+      choose_features(username)
+
+    
 
 
 #Function that helps you search for friends
@@ -1727,11 +1847,11 @@ def logout(username):
     decision = input("Do you want to log out (Y / N)? ").strip().upper()
 
     # if user selects yes, log out
-    if decision == "Y":
+    if decision == "Y" or decision == 'y':
         return 0
 
     # Else if user selects no, return to feature select
-    elif decision == "N":
+    elif decision == "N" or decision == 'n':
         choose_features(username)
 
     #Else if user selects anything else, display error message and prompt user to try again
@@ -1765,11 +1885,11 @@ def go_back():
     decision = input("Do you want to go back (Y / N)? ").strip().upper()
 
     #if user wants to go back, return True
-    if decision == "Y":
+    if decision == "Y" or decision == 'y':
         return True
 
     #else if user wants to log out, return False
-    elif decision == "N":
+    elif decision == "N" or decision == 'n':
         return False
 
     #else, inform user of invalid input and repeat this function
