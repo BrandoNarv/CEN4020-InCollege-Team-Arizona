@@ -516,7 +516,7 @@ def job_select(username):
     ).lower()
 
     #If user selects yes, have them search for the job
-    if view_info == "y" or view_info == "Y":
+    if view_info == "y":
         apply_for_job(username)
       
     
@@ -580,10 +580,16 @@ def send_application(username, job_title):
 
   #First, check and see if the user has already applied to this job
   application_check = search_application(username, job_title)
+  origin_check = user_made_job(get_first_name(username),get_last_name(username),job_title)
+  
 
   #If the user has applied to this job, inform them that they have already applied
   if application_check is True:
     print("\nYou have already applied to this job.")
+    choose_features(username)
+
+  elif origin_check is True:
+    print("\nYou can't hire yourself for a job you posted!")
     choose_features(username)
     
   #If the user has not applied to this job, then send the application
@@ -1847,11 +1853,11 @@ def logout(username):
     decision = input("Do you want to log out (Y / N)? ").strip().upper()
 
     # if user selects yes, log out
-    if decision == "Y" or decision == 'y':
+    if decision == "Y":
         return 0
 
     # Else if user selects no, return to feature select
-    elif decision == "N" or decision == 'n':
+    elif decision == "N":
         choose_features(username)
 
     #Else if user selects anything else, display error message and prompt user to try again
@@ -1885,11 +1891,11 @@ def go_back():
     decision = input("Do you want to go back (Y / N)? ").strip().upper()
 
     #if user wants to go back, return True
-    if decision == "Y":
+    if decision == "Y" or decision == 'y':
         return True
 
     #else if user wants to log out, return False
-    elif decision == "N":
+    elif decision == "N" or decision == 'n':
         return False
 
     #else, inform user of invalid input and repeat this function
