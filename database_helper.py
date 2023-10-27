@@ -31,6 +31,29 @@ c.execute(
           )"""
 )
 
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS job_applications (
+
+          title text,
+          user text,
+          graduation text,
+          start text,
+          description text
+
+          )"""
+)
+
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS jobs_saved (
+
+          title text,
+          user text
+
+          )"""
+)
+
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends (
 
@@ -633,3 +656,51 @@ def get_job(job_title):
       return info
   else:
       return False
+
+
+
+def create_application(username, job_title,graduation,start,description):
+  """Returns True if the application was successfully created, False otherwise"""
+  try:
+      with conn:
+          # Insert username, password, first name, and last name into database
+          c.execute(
+              "INSERT INTO job_applications VALUES (:title, :user,:graduation,:start,:description)",
+              {"title": job_title, "user": username, 
+               "graduation":graduation, "start":start
+               , "description":description
+              },
+          )
+      return True
+  except sqlite3.Error as error:
+      print("Failed to add job application into sqlite table:", error)
+      return False
+
+
+def search_application(username,job_title):
+
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT * FROM job_applications WHERE user=:user AND title=:title",
+    {"user": username,"title": job_title,},
+  )
+  info = c.fetchone()
+
+  if info:
+      return True
+  else:
+      return False
+
+
+def applied_jobs_list(username):
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT * FROM job_applications WHERE user=:user",
+    {"user": username,},
+  )
+  jobs = c.fetchall()
+
+  if jobs:
+    return [jobs[0] for jobs in jobs]
+  else:
+    return False
