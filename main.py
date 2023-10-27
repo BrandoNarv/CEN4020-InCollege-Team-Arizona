@@ -2018,3 +2018,107 @@ def change_limit_login():
         limit_login = True
 
     #Else, increment log in attempy by 1
+    else:
+        login_attempts += 1
+
+    #return limit login regardless of condition/limit-cap
+    return limit_login
+
+#Function that is used when user fails log in and counts the number of login attempts
+def try_again():
+    """Ask user if they want to try to login again after failed attempt. Currently the user has unlimited attempts to try again"""
+
+    #Prompt user to try again
+    decision = input("Do you want to try again (Y / N)? ").strip().upper()
+    limit = change_limit_login()
+
+    #If user says yes, try again
+    if decision == "Y" and limit == False:
+        return True
+
+    #If user says yes, but runs out of attempts, end the program
+    elif decision == "Y" and limit == True:
+        print("Ran out of attempts! Try again later")
+        return False
+
+    #If user says no, end the program
+    elif decision == "N":
+        return False
+
+    #If user inputs invalid input, try again
+    else:
+        print("Invalid input, please try again")
+        try_again()
+
+
+# HELPERS for printing the headers of each section
+# Makes it easier to know which section you're in while navigating Incollege
+def draw_line(message):
+    """Draw a line with the message in the middle. The line dynamically adjusts to the terminal width"""
+    terminal_width, _ = shutil.get_terminal_size()
+    print()
+    print("-" * terminal_width)
+    print(message.upper())
+    print("-" * terminal_width)
+
+#Function for when the web page opens,and greets user
+def web_opening():
+    """Opening page for the web application"""
+
+    # Print the inspirational message
+    print(
+        '"I found making a career difficult, but thanks to inCollege: I was able to find the help that I needed!" - Hoff Reidman\n'
+    )
+
+    #Prompt user if they want to watch a video
+    video_prompt = input("Would you like to watch their story (Y/N)? ")
+
+    # if they want to watch the video, print the video
+    if video_prompt == "y" or video_prompt == "Y":
+        print("Video is now playing...\n")
+        time.sleep(5)
+        print("Video is complete.\n")
+
+#Function that prompts user to use navigation links or head to login page
+def links_or_login():
+    """Prompts user to either use the navigation links or to login page"""
+    links_prompt = input(
+        "Do you want to navigate and explore InCollege while logged out (Y/N)? "
+    )
+
+    if links_prompt == "y" or links_prompt == "Y":
+        choose_navigation_link()
+
+# Main Function/Driver helper, which decides the first steps of the program
+def main_helper():
+    decision = main_entry()
+
+    username = None
+    while decision is None:
+        decision = main_entry()
+    if decision == "S":
+        username = signup()
+    elif decision == "L":
+        prompt_person_search()
+        username = login()
+
+    if username is None:
+        sys.exit()
+
+    choose_features(username)
+
+    print("Thank you for using InCollege!")
+    draw_line(message="End of Program")
+    exit()
+
+#Main Function/Driver
+def main():
+    """Main function that controls the flow of the program"""
+
+    web_opening()
+    links_or_login()
+    main_helper()
+
+
+if __name__ == "__main__":
+    main()
