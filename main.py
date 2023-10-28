@@ -452,19 +452,20 @@ def job_delete(username):
         print("You have not posted any jobs yet. So you can't delete any jobs.")
 
     # Prompt user to select a job to delete
-    delete_job_confirmation = input("Would you like to delete a job? y/n: ").lower()
-    if delete_job_confirmation == "y":
-        delete_job_title = input("Please enter the job title you want to delete: ")
-        if delete_job_title in jobs:
-            delete_job(delete_job_title)
-            clean_saved_jobs_when_job_deleted(delete_job_title)
-            print("Job deleted successfully!")
+    if jobs:
+        delete_job_confirmation = input("Would you like to delete a job? y/n: ").lower()
+        if delete_job_confirmation == "y":
+            delete_job_title = input("Please enter the job title you want to delete: ")
+            if delete_job_title in jobs:
+                delete_job(delete_job_title)
+                clean_saved_jobs_when_job_deleted(delete_job_title)
+                print("Job deleted successfully!")
+            else:
+                print("You don't have a job with that title.")
+        elif delete_job_confirmation == "n":
+            print("You have chosen not to delete a job.")
         else:
-            print("You don't have a job with that title.")
-    elif delete_job_confirmation == "n":
-        print("You have chosen not to delete a job.")
-    else:
-        print("Invalid input. Please try again.")
+            print("Invalid input. Please try again.")
 
     # Go back to feature select by default
     if go_back():
