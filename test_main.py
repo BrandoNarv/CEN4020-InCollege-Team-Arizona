@@ -2087,6 +2087,19 @@ def test_display_friend_invalid(monkeypatch, capsys):
 
 "///////////////////////   Epic #6   //////////////////////////////////////////////"
 
+def mock_signup_helper(prompt):
+  if "Enter your username: " in prompt:
+      return "mockuser"
+  elif "Enter your password: " in prompt:
+      return "ValidPass1!"
+  elif "Please insert your first name: " in prompt:
+      return "Test"
+  elif "Please insert your last name: " in prompt:
+      return "User"
+
+
+
+  
 
 # Tests to check that the system can support up to ten job listings are in lines 450 to 578
 # as they were tested during Epic #2 but has been modified to test support from five job listings
@@ -2234,7 +2247,7 @@ def mock_view_all_jobs(prompt):
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
-    
+
 def test_view_all_jobs(monkeypatch, capsys):
     # Creatjng job listings and a test application for the test
     create_job(
@@ -2321,7 +2334,7 @@ def mock_job_information(prompt):
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
-    
+
 def test_job_information(monkeypatch, capsys):
     # Creatjng job listing for the test
     create_job(
@@ -2385,7 +2398,7 @@ def mock_job_application_fail(prompt):
     if "Do you want to log out (Y / N)? " in prompt:
         return "Y"
 
-    
+
 def test_job_application_success(monkeypatch, capsys):
     # Creatjng job listing for the test
     create_job(
@@ -2463,11 +2476,16 @@ def test_job_application_fail_V2(monkeypatch, capsys):
         last="User",
     )
 
+    monkeypatch.setattr("builtins.input", mock_signup_helper)
+
+    # Call the signup function
+    signup()
+
     # Mock user input for testing apply_for_job feature
     monkeypatch.setattr("builtins.input", mock_job_application_fail)
 
     # Call the apply_for_job function
-    apply_for_job("testuser")
+    apply_for_job("mockuser")
 
     # Capture the printed output
     captured = capsys.readouterr()
@@ -2478,3 +2496,5 @@ def test_job_application_fail_V2(monkeypatch, capsys):
     # Calling delete_job functions for test clean up
     delete_job("a")
     clean_saved_jobs_when_job_deleted("a")
+    assert delete_user("mockuser") is True
+    assert delete_user("testuser") is True
