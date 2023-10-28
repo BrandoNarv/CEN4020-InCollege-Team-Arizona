@@ -113,8 +113,8 @@ def mock_try_again_input(prompt):
 def mock_features_input(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
-    if "Choose one of ['a', 'b', 'c', 'd']:" in prompt:
-        return "d"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
+        return "f"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
@@ -414,7 +414,7 @@ def test_friend_search_fail_2(monkeypatch, capsys):
 
 def go_back_pass_input(prompt):
     if "Choose one of" in prompt:
-        return "d"
+        return "f"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
