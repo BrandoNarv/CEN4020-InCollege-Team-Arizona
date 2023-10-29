@@ -2498,3 +2498,252 @@ def test_job_application_fail_V2(monkeypatch, capsys):
     clean_saved_jobs_when_job_deleted("a")
     assert delete_user("mockuser") is True
     assert delete_user("testuser") is True
+
+def mock_display_applied_jobs(prompt):
+    # Mocks input for a user displaying list of applied jobs
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_display_applied_jobs(monkeypatch, capsys):
+    # Creatjng job listings and a test application for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="c",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    # Mock user input for testing list_applied_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the list_applied_jobs function
+    list_applied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the applied jobs in the system
+    assert "\nListing all jobs you've applied for:\n" in captured.out
+    assert "[Applied] a" in captured.out
+
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+
+
+def test_display_not_applied_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="e",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing list_unapplied_jobs
+    monkeypatch.setattr("builtins.input", mock_view_all_jobs)
+
+    # Call the list_unapplied_jobs function
+    list_unapplied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the unapplied jobs in the system
+    assert "\nListing all jobs you have NOT applied for:\n" in captured.out
+    assert "[] e" in captured.out
+
+    delete_job("e")
+    clean_saved_jobs_when_job_deleted("e")
+
+
+def mock_save_unsave_jobs(prompt):
+    # Mocks input for a user saving and unsaving jobs
+    if "Would you like to save a job? y/n: " in prompt:
+        return "y"
+    if "Please enter the job title you want to save: " in prompt:
+        return "f"
+    if "\nWould you like to unsave a job? y/n: " in prompt:
+        return "y"
+    if "Please enter the job title you want to unsave: " in prompt:
+        return "f"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_save_unsave_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="f",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing save_job
+    monkeypatch.setattr("builtins.input", mock_save_unsave_jobs)
+
+    # Call the save_job function
+    save_job("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system saves and unsaves jobs in the system
+    assert "1 - f" in captured.out
+    assert "Job saved successfully!" in captured.out
+    assert "Job unsaved successfully!" in captured.out
+
+    delete_job("f")
+    clean_saved_jobs_when_job_deleted("f")
+
+
+def test_display_saved_jobs(monkeypatch, capsys):
+    # Creatjng saved job  for the test
+    save_job_for_user(
+        username="testuser",
+        saved_job_title="g"
+    )
+
+    # Mock user input for testing show_saved_jobs and job_select feature
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_saved_jobs function
+    show_saved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the saved jobs in the system
+    assert "Here are the jobs you saved for later:\n" in captured.out
+    assert "1 - g" in captured.out
+
+    delete_job("g")
+    clean_saved_jobs_when_job_deleted("g")
+
+
+def test_display_unsaved_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="h",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing show_unsaved_jobs and job_select feature
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_unsaved_jobs function
+    show_unsaved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the unsaved jobs in the system
+    assert "Here are the jobs you have not saved for later:\n" in captured.out
+    assert "1 - h" in captured.out
+
+    delete_job("h")
+    clean_saved_jobs_when_job_deleted("h")
+
+
+def mock_display_applied_saved_jobs(prompt):
+    # Mocks input for a user displaying list of applied and unsaved jobs after logging out
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "y"
+
+
+def test_display_applied_saved_jobs(monkeypatch, capsys):
+    # Creatjng job listings, a test application, and saved job for the test
+    create_job(
+        title="i",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_job(
+        title="j",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="i",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    save_job_for_user(
+        username="testuser",
+        saved_job_title="j"
+    )
+
+    # Mock user input for testing logout
+    monkeypatch.setattr("builtins.input", mock_display_applied_saved_jobs)
+
+    # Call the logout function
+    return_stm = logout("testuser")
+
+    # Asserts that the system logs user out
+    assert return_stm == 0
+
+
+    # Mock user input for testing list_applied_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the list_applied_jobs function
+    list_applied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "\nListing all jobs you've applied for:\n" in captured.out
+    assert "[Applied] i" in captured.out
+
+    # Mock user input for testing show_saved_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_saved_jobs function
+    show_saved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "Here are the jobs you saved for later:\n" in captured.out
+    assert "1 - j" in captured.out
+
+    delete_job("i")
+    clean_saved_jobs_when_job_deleted("i")
+    delete_job("j")
+    clean_saved_jobs_when_job_deleted("j")
