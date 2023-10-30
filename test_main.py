@@ -2099,7 +2099,7 @@ def mock_signup_helper(prompt):
 
 
 
-  
+
 
 # Tests to check that the system can support up to ten job listings are in lines 450 to 578
 # as they were tested during Epic #2 but has been modified to test support from five job listings
@@ -2497,7 +2497,6 @@ def test_job_application_fail_V2(monkeypatch, capsys):
     delete_job("a")
     clean_saved_jobs_when_job_deleted("a")
     assert delete_user("mockuser") is True
-    assert delete_user("testuser") is True
 
 def mock_display_applied_jobs(prompt):
     # Mocks input for a user displaying list of applied jobs
