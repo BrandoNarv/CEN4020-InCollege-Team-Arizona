@@ -244,10 +244,19 @@ def signup():
     lastname = input("Please insert your last name: ")
     university = input("Please insert the university you are attending: ")
     major = input("Please insert your major: ")
+  
+    # Ask the user if they wish to upgrade their into database
+    print("\nHere at Incollege, we offer the ability for accounts to be upgraded to plus tier. For $10 a month, you can message and contact all users on this site without them being on your friend's list.\n")
+    account_type = input("Would you like to upgrade your account? (Y / N): ").strip().upper()
+
+    if account_type == "Y":
+      print("\nYou have upgraded your account to plus tier. Thank you!\n")
+  
+    tier = 1 if account_type == "Y" else 0
 
     # If you can create a user with no problems, then sign up is successful
     # Sign them in, set language to english by default, and set email, SMS, and Ads
-    if create_user(username, password, firstname, lastname, university, major):
+    if create_user(username, password, firstname, lastname, university, major,tier):
         print("Signup successful!")
         global signed_in
         signed_in = True
