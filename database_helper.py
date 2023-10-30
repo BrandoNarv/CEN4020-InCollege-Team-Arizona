@@ -12,7 +12,8 @@ c.execute(
           first text,
           last text,
           university text,
-          major text
+          major text,
+          tier int
 
           )"""
 )
@@ -379,13 +380,13 @@ def delete_education(username):
         return False
 
 
-def create_user(username, password, first, last, university, major):
+def create_user(username, password, first, last, university, major,tier):
     """Returns True if the user was successfully created, False otherwise"""
     try:
         with conn:
             # Insert username, password, first name, and last name into database
             c.execute(
-                "INSERT INTO accounts VALUES (:user, :pass, :first, :last, :university, :major)",
+                "INSERT INTO accounts VALUES (:user, :pass, :first, :last, :university, :major, :tier)",
                 {
                     "user": username,
                     "pass": password,
@@ -393,6 +394,7 @@ def create_user(username, password, first, last, university, major):
                     "last": last,
                     "university": university,
                     "major": major,
+                    "tier": tier,
                 },
             )
         return True
