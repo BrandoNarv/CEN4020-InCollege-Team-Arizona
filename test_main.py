@@ -140,7 +140,7 @@ def mock_no_selected_skill_input(prompt):
 
 def test_successful_login(monkeypatch, capsys):
     # Mock user input for successful login
-    create_user("testuser", "ValidPass1!", "Test", "User", "USF", "Major")
+    create_user("testuser", "ValidPass1!", "Test", "User", "USF", "Major", 0)
     monkeypatch.setattr("builtins.input", mock_success_input)
 
     # Call the login function
@@ -267,6 +267,8 @@ def mock_signup(prompt):
         return "anotherTest"
     elif "Please insert your last name: " in prompt:
         return "anotherUser"
+    elif "Would you like to upgrade your account? (Y / N): " in prompt:
+      return "N"
 
 
 def test_signup(monkeypatch, capsys):
@@ -285,7 +287,7 @@ def test_signup(monkeypatch, capsys):
 
 
 def test_name_search_success(monkeypatch, capsys):
-    create_user("testuser", "ValidPass1!", "Test", "User", "USF", "Major")
+    create_user("testuser", "ValidPass1!", "Test", "User", "USF", "Major", 0)
     # Mock user input for successful name search
     monkeypatch.setattr("builtins.input", mock_name_search_success)
 
@@ -370,6 +372,7 @@ def test_friend_search_pass(monkeypatch, capsys):
         last="User",
         university="USF",
         major="Major",
+        tier=0,
     )
     monkeypatch.setattr("builtins.input", friend_search_pass_input)
     name_search()
@@ -386,6 +389,7 @@ def test_friend_search_fail_1(monkeypatch, capsys):
         last="User",
         university="USF",
         major="Major",
+        tier=0,
     )
     monkeypatch.setattr("builtins.input", friend_search_fail_input)
     name_search()
@@ -403,6 +407,7 @@ def test_friend_search_fail_2(monkeypatch, capsys):
         last="User",
         university="USF",
         major="Major",
+        tier=0,
     )
     monkeypatch.setattr("builtins.input", friend_search_fail_input_2)
     name_search()
@@ -1482,7 +1487,7 @@ def test_friends_list_initially_empty():
     username = "test_user"
     password = "password123"
     create_user(
-        username, password, "John", "Doe", "Test University", "Computer Science"
+        username, password, "John", "Doe", "Test University", "Computer Science", 0
     )
 
     # Check that new user has empty friends list
@@ -1495,8 +1500,8 @@ def test_friends_list_initially_empty():
 
 def test_find_someone_you_know():
     # Create some test users
-    create_user("alice", "pw123", "Alice", "Smith", "State U", "Computer Science")
-    create_user("bob", "pw456", "Bob", "Jones", "State U", "Biology")
+    create_user("alice", "pw123", "Alice", "Smith", "State U", "Computer Science", 0)
+    create_user("bob", "pw456", "Bob", "Jones", "State U", "Biology", 0)
 
     logged_in_user = "charlie"
 
@@ -1975,7 +1980,7 @@ def test_update_user_profile(monkeypatch, capsys):
 
 
 def test_display_user_profile(monkeypatch, capsys):
-    create_user("test", "pwd123", "Test", "User", "Test U", "CS")
+    create_user("test", "pwd123", "Test", "User", "Test U", "CS", 0)
 
     monkeypatch.setattr("builtins.input", lambda x: "Y")
 
@@ -2096,9 +2101,8 @@ def mock_signup_helper(prompt):
       return "Test"
   elif "Please insert your last name: " in prompt:
       return "User"
-
-
-
+  elif "Would you like to upgrade your account? (Y / N): " in prompt:
+    return "N"
 
 
 # Tests to check that the system can support up to ten job listings are in lines 450 to 578
