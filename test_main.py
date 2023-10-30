@@ -113,8 +113,8 @@ def mock_try_again_input(prompt):
 def mock_features_input(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
         return "a"
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
+        return "f"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
@@ -414,7 +414,7 @@ def test_friend_search_fail_2(monkeypatch, capsys):
 
 def go_back_pass_input(prompt):
     if "Choose one of" in prompt:
-        return "d"
+        return "f"
     if "Do you want to go back (Y / N)? " in prompt:
         return "N"
 
@@ -447,12 +447,12 @@ def test_learn_skill_go_back(monkeypatch, capsys):
     assert "Go back" in captured.out
 
 
-def test_check_five_jobs_pass(capsys):
-    for i in range(0, 5):
+def test_check_ten_jobs_pass(capsys):
+    for i in range(0, 10):
         assert reached_job_limit(i) is False
 
 
-def test_check_five_jobs_fail(capsys):
+def test_check_ten_jobs_fail(capsys):
     assert reached_job_limit(10) is True
     captured = capsys.readouterr()
     assert (
@@ -1212,13 +1212,10 @@ def delete_friend_request_helper(monkeypatch, capsys):
 # Mocks quiting the program if network has no friends
 def mock_quit_from_network_input_V1(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "Y"
 
 
 # Mocks quiting the program if you don't remove friends
@@ -1239,13 +1236,10 @@ def mock_quit_from_network_input_V3(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Mocks sending a friend request and then quit
@@ -1272,13 +1266,10 @@ def mock_accept_request_input(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Mocks rejecting a friend request and then quit
@@ -1290,13 +1281,10 @@ def mock_delete_request_input(prompt):
         return "TestFriend"
 
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "a"
+        return "h"
 
-    if "Choose one of ['a', 'b']:" in prompt:
-        return "b"
-
-    if "Do you want to go back (Y / N)? " in prompt:
-        return "N"
+    if "Do you want to log out (Y / N)? " in prompt:
+      return "Y"
 
 
 # Test to see if friends list returns empty and informs the user
@@ -2095,3 +2083,666 @@ def test_display_friend_invalid(monkeypatch, capsys):
     captured = capsys.readouterr()
     assert "Character not identified" in captured.out
     monkeypatch.setattr("main.display_friend_profile", Mock())
+
+
+"///////////////////////   Epic #6   //////////////////////////////////////////////"
+
+def mock_signup_helper(prompt):
+  if "Enter your username: " in prompt:
+      return "mockuser"
+  elif "Enter your password: " in prompt:
+      return "ValidPass1!"
+  elif "Please insert your first name: " in prompt:
+      return "Test"
+  elif "Please insert your last name: " in prompt:
+      return "User"
+
+
+
+
+
+# Tests to check that the system can support up to ten job listings are in lines 450 to 578
+# as they were tested during Epic #2 but has been modified to test support from five job listings
+# to ten job listings
+
+
+def mock_job_delete_success(prompt):
+    # Mock input for a user deleting a job posting
+    if "Would you like to delete a job? y/n: " in prompt:
+        return "y"
+    if "Please enter the job title you want to delete: " in prompt:
+        return "a"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_job_delete_success(monkeypatch, capsys):
+    # Creatjng a job listing for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="Test",
+        last="User",
+    )
+
+    # Mock user input for job_delete function
+    monkeypatch.setattr("builtins.input", mock_job_delete_success)
+
+    # Call the job_delete function
+    job_delete("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the job listing the user has chosen is deleted
+    assert "Here are the jobs you posted that you can delete:\n" in captured.out
+    assert "1 - a" in captured.out
+    assert "Job deleted successfully!" in captured.out
+
+
+def mock_job_delete_notification(prompt):
+    # Mock input to test for job deleted notification
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
+        return "f"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_job_delete_notification(monkeypatch, capsys):
+    # Creatjng a job listing, job application, and deleted created job listing for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="a",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    delete_job("a")
+
+    clean_saved_jobs_when_job_deleted("a")
+
+    # Mock user input for job_search function
+    monkeypatch.setattr("builtins.input", mock_job_delete_notification)
+
+    # Call the job_delete function
+    job_search("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the job listing the user has chosen is deleted
+    assert "Here are the jobs you applied for, but got deleted:" in captured.out
+    assert "1 - a" in captured.out
+
+
+# Testing that the job_search function can now be called from the top level menu is tested
+# in lines 180 to 198 as it was tested in Epic #1 but was modified to add this feature choice
+
+
+def mock_job_options(prompt):
+    # Mocks input for job options and viewing features
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
+        return "f"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_job_options(monkeypatch, capsys):
+    # Mock user input for testing job_search feature
+    monkeypatch.setattr("builtins.input", mock_job_options)
+
+    # Call the job_search function
+    job_search("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the options avaliable to the user when job searching
+    assert "a. Post a job" in captured.out
+    assert "b. Apply for a Job" in captured.out
+    assert "c. View Jobs" in captured.out
+    assert "d. Delete a job" in captured.out
+    assert "e. Save/unsave a job for later" in captured.out
+    assert "f. Go back" in captured.out
+
+
+def test_view_jobs_options(monkeypatch, capsys):
+    # Mock user input for testing job_listing feature
+    monkeypatch.setattr("builtins.input", mock_job_options)
+
+    # Call the job_listing function
+    job_listing("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts the options avaliable to the user when viewing jobs
+    assert "a. List all jobs available" in captured.out
+    assert "b. List only applied jobs" in captured.out
+    assert "c. List only not applied jobs" in captured.out
+    assert "d. List only saved jobs" in captured.out
+    assert "e. List only unsaved jobs" in captured.out
+    assert "f. Go back" in captured.out
+
+
+def mock_view_all_jobs(prompt):
+    # Mocks input for a user that doesn't want to apply for any of jobs in the system
+    # while allows showing that it allows the user to apply for one on the system
+    if "Do you want to apply to any of the jobs on this list? y/n?: " in prompt:
+        return "n"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_view_all_jobs(monkeypatch, capsys):
+    # Creatjng job listings and a test application for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+    create_job(
+        title="b",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+    create_job(
+        title="c",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="c",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    # Mock user input for testing list_all_jobs and job_select feature
+    monkeypatch.setattr("builtins.input", mock_view_all_jobs)
+
+    # Call the list_all_jobs function
+    list_all_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the avaliable jobs in the system and as well as 
+    # jobs in the system that they already applied for
+    assert "\nHere are all jobs available:\n" in captured.out
+    assert "[] a" in captured.out
+    assert "[] b" in captured.out
+    assert "[Applied] c" in captured.out
+
+    # Call the job_select function
+    job_select("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the avaliable jobs in the system and as well as 
+    # jobs in the system that they already applied for on the job_select function as it also
+    # by default lists all of the jobs in the system
+    assert "\nHere are all jobs available:\n" in captured.out
+    assert "[] a" in captured.out
+    assert "[] b" in captured.out
+    assert "[Applied] c" in captured.out
+
+    # Calling delete_job functions for test clean up
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+    delete_job("b")
+    clean_saved_jobs_when_job_deleted("b")
+    delete_job("c")
+    clean_saved_jobs_when_job_deleted("c")
+
+
+def mock_job_information(prompt):
+    # Mocks input for a user looking up the job they want to apply for and declining to apply
+    if "\nEnter the title of the job you want to apply for: " in prompt:
+        return "a"
+    if "Confirm this job and send the application? y/n?: " in prompt:
+        return "n"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_job_information(monkeypatch, capsys):
+    # Creatjng job listing for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing apply_for_job feature
+    monkeypatch.setattr("builtins.input", mock_job_information)
+
+    # Call the apply_for_job function
+    apply_for_job("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays the job information for job they are considering to apply for
+    assert "\nThis is the current job information for this title:" in captured.out
+    assert "\nTitle: a" in captured.out
+    assert "Description: b" in captured.out
+    assert "Employer: c" in captured.out
+    assert "Location: d" in captured.out
+    assert "Salary: e" in captured.out
+
+    # Calling delete_job functions for test clean up
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+
+
+def mock_job_application_success(prompt):
+    # Mocks input for a user looking up the job they want to apply for and applying for it
+    if "\nEnter the title of the job you want to apply for: " in prompt:
+        return "a"
+    if "Confirm this job and send the application? y/n?: " in prompt:
+        return "y"
+    if "Please enter your predicted graduation date(mm/dd/yyyy): " in prompt:
+        return "01/01/1990"
+    if "Please enter your predicted start date(mm/dd/yyyy): " in prompt:
+        return "01/02/1990"
+    if "Please explain why you'd be a great fit for this job: " in prompt:
+        return "I think I would be a great candidate"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+        return "h"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "Y"
+
+
+def mock_job_application_fail(prompt):
+    # Mocks input for a user looking up the job but failing to apply for the job
+    if "\nEnter the title of the job you want to apply for: " in prompt:
+        return "a"
+    if "Confirm this job and send the application? y/n?: " in prompt:
+        return "y"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+        return "h"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "Y"
+
+
+def test_job_application_success(monkeypatch, capsys):
+    # Creatjng job listing for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing apply_for_job feature
+    monkeypatch.setattr("builtins.input", mock_job_application_success)
+
+    # Call the apply_for_job function
+    apply_for_job("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the user has successfully sent their application
+    assert "Application sent. We wish you luck on obtaining the position!\n" in captured.out
+
+    # Calling delete_job functions for test clean up
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+
+
+def test_job_application_fail_V1(monkeypatch, capsys):
+    # Creatjng job listing and application for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="a",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+    # Mock user input for testing apply_for_job feature
+    monkeypatch.setattr("builtins.input", mock_job_application_fail)
+
+    # Call the apply_for_job function
+    apply_for_job("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the user can't reapply for a job they already sent an application for
+    assert "\nYou have already applied to this job, and cannot resend an application." in captured.out
+
+    # Calling delete_job functions for test clean up
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+
+
+def test_job_application_fail_V2(monkeypatch, capsys):
+    # Creatjng job listing for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="Test",
+        last="User",
+    )
+
+    monkeypatch.setattr("builtins.input", mock_signup_helper)
+
+    # Call the signup function
+    signup()
+
+    # Mock user input for testing apply_for_job feature
+    monkeypatch.setattr("builtins.input", mock_job_application_fail)
+
+    # Call the apply_for_job function
+    apply_for_job("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the user can't apply for job they posted
+    assert "\nYou can't hire yourself for a job you posted!" in captured.out
+
+    # Calling delete_job functions for test clean up
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+    assert delete_user("mockuser") is True
+
+def mock_display_applied_jobs(prompt):
+    # Mocks input for a user displaying list of applied jobs
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_display_applied_jobs(monkeypatch, capsys):
+    # Creatjng job listings and a test application for the test
+    create_job(
+        title="a",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="c",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    # Mock user input for testing list_applied_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the list_applied_jobs function
+    list_applied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the applied jobs in the system
+    assert "\nListing all jobs you've applied for:\n" in captured.out
+    assert "[Applied] a" in captured.out
+
+    delete_job("a")
+    clean_saved_jobs_when_job_deleted("a")
+
+
+def test_display_not_applied_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="e",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing list_unapplied_jobs
+    monkeypatch.setattr("builtins.input", mock_view_all_jobs)
+
+    # Call the list_unapplied_jobs function
+    list_unapplied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the unapplied jobs in the system
+    assert "\nListing all jobs you have NOT applied for:\n" in captured.out
+    assert "[] e" in captured.out
+
+    delete_job("e")
+    clean_saved_jobs_when_job_deleted("e")
+
+
+def mock_save_unsave_jobs(prompt):
+    # Mocks input for a user saving and unsaving jobs
+    if "Would you like to save a job? y/n: " in prompt:
+        return "y"
+    if "Please enter the job title you want to save: " in prompt:
+        return "f"
+    if "\nWould you like to unsave a job? y/n: " in prompt:
+        return "y"
+    if "Please enter the job title you want to unsave: " in prompt:
+        return "f"
+    if "Do you want to go back (Y / N)? " in prompt:
+        return "N"
+
+
+def test_save_unsave_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="f",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing save_job
+    monkeypatch.setattr("builtins.input", mock_save_unsave_jobs)
+
+    # Call the save_job function
+    save_job("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system saves and unsaves jobs in the system
+    assert "1 - f" in captured.out
+    assert "Job saved successfully!" in captured.out
+    assert "Job unsaved successfully!" in captured.out
+
+    delete_job("f")
+    clean_saved_jobs_when_job_deleted("f")
+
+
+def test_display_saved_jobs(monkeypatch, capsys):
+    # Creatjng saved job  for the test
+    save_job_for_user(
+        username="testuser",
+        saved_job_title="g"
+    )
+
+    # Mock user input for testing show_saved_jobs and job_select feature
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_saved_jobs function
+    show_saved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the saved jobs in the system
+    assert "Here are the jobs you saved for later:\n" in captured.out
+    assert "1 - g" in captured.out
+
+    delete_job("g")
+    clean_saved_jobs_when_job_deleted("g")
+
+
+def test_display_unsaved_jobs(monkeypatch, capsys):
+    # Creatjng job listings for the test
+    create_job(
+        title="h",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    # Mock user input for testing show_unsaved_jobs and job_select feature
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_unsaved_jobs function
+    show_unsaved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Asserts that the system displays all of the unsaved jobs in the system
+    assert "Here are the jobs you have not saved for later:\n" in captured.out
+    assert "1 - h" in captured.out
+
+    delete_job("h")
+    clean_saved_jobs_when_job_deleted("h")
+
+
+def mock_display_applied_saved_jobs(prompt):
+    # Mocks input for a user displaying list of applied and unsaved jobs after logging out
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "y"
+
+
+def test_display_applied_saved_jobs(monkeypatch, capsys):
+    # Creatjng job listings, a test application, and saved job for the test
+    create_job(
+        title="i",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_job(
+        title="j",
+        description="b",
+        employer="c",
+        location="d",
+        salary="e",
+        first="f",
+        last="g",
+    )
+
+    create_application(
+        username="testuser",
+        job_title="i",
+        graduation="b",
+        start="c",
+        description="d",
+    )
+
+    save_job_for_user(
+        username="testuser",
+        saved_job_title="j"
+    )
+
+    # Mock user input for testing logout
+    monkeypatch.setattr("builtins.input", mock_display_applied_saved_jobs)
+
+    # Call the logout function
+    return_stm = logout("testuser")
+
+    # Asserts that the system logs user out
+    assert return_stm == 0
+
+
+    # Mock user input for testing list_applied_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the list_applied_jobs function
+    list_applied_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "\nListing all jobs you've applied for:\n" in captured.out
+    assert "[Applied] i" in captured.out
+
+    # Mock user input for testing show_saved_jobs
+    monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
+
+    # Call the show_saved_jobs function
+    show_saved_jobs("testuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "Here are the jobs you saved for later:\n" in captured.out
+    assert "1 - j" in captured.out
+
+    delete_job("i")
+    clean_saved_jobs_when_job_deleted("i")
+    delete_job("j")
+    clean_saved_jobs_when_job_deleted("j")

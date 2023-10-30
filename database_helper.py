@@ -31,9 +31,32 @@ c.execute(
           )"""
 )
 
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS job_applications (
+
+          title text,
+          user text,
+          graduation text,
+          start text,
+          description text
+
+          )"""
+)
+
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS jobs_saved (
+
+          title text,
+          user text
+
+          )"""
+)
+
 c.execute(
     """CREATE TABLE IF NOT EXISTS friends (
-    
+
           user text,
           friend_user text 
 
@@ -86,6 +109,66 @@ c.execute(
 
           )"""
 )
+
+
+def save_job_for_user(username, saved_job_title):
+    """Returns True if the job was successfully saved, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO jobs_saved VALUES (:title, :user)",
+                {"title": saved_job_title, "user": username},
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add job into sqlite table:", error)
+        return False
+
+
+def get_saved_jobs(username):
+    """Returns a list of all jobs saved by the user"""
+    try:
+        with conn:
+            c.execute("SELECT * FROM jobs_saved WHERE user = :user", {"user": username})
+            jobs = c.fetchall()
+            if jobs:
+                return [job[0] for job in jobs]
+            else:
+                return []
+    except sqlite3.Error as error:
+        print("Failed to get jobs from sqlite table:", error)
+        return []
+
+
+def clean_saved_jobs_when_job_deleted(title):
+    """ "Return true if all the deleted jobs were successfully deleted from the saved jobs table"""
+    try:
+        with conn:
+            # Delete the job with the provided title
+            c.execute("DELETE FROM jobs_saved WHERE title = ?", (title,))
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete job from the sqlite table:", error)
+        return False
+
+
+def delete_saved_job(username, saved_job_title):
+    """Returns True if the job was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            # Delete the job with the provided title
+            c.execute(
+                "DELETE FROM jobs_saved WHERE title = ? AND user = ?",
+                (
+                    saved_job_title,
+                    username,
+                ),
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete job from the sqlite table:", error)
+        return False
 
 
 def create_profile(username, university, major, title, about):
@@ -384,6 +467,32 @@ def create_job(title, description, employer, location, salary, first, last):
         return False
 
 
+def get_all_job_titles():
+    """Returns a list of all jobs"""
+    try:
+        with conn:
+            c.execute("SELECT * FROM jobs")
+            return [job[0] for job in c.fetchall()]
+    except sqlite3.Error as error:
+        print("Failed to get jobs from sqlite table:", error)
+        return []
+
+
+def get_job_list_posted_by_user(first, last):
+    """Returns a list of jobs posted by the user"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            # return a list of job titles
+            c.execute(
+                "SELECT title FROM jobs WHERE first = ? AND last = ?", (first, last)
+            )
+            return [job[0] for job in c.fetchall()]
+    except sqlite3.Error as error:
+        print("Failed to get jobs from sqlite table:", error)
+        return []
+
+
 def delete_job(title):
     """Returns True if the job was successfully deleted, False otherwise"""
     try:
@@ -607,3 +716,116 @@ def delete_friend_from_list(username, friend_username):
     except sqlite3.Error as error:
         print("Failed to delete user from the sqlite table:", error)
         return False
+
+
+def all_jobs_list(username):
+    """Returns all jobs"""
+    c.execute("SELECT * FROM jobs")
+    jobs = c.fetchall()
+
+    if jobs:
+        return [job[0] for job in jobs]
+    else:
+        return []
+
+
+# Function gets the info of the job that matches the title searched
+def get_job(job_title):
+    """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+    c.execute(
+        "SELECT * FROM jobs WHERE title=:title",
+        {
+            "title": job_title,
+        },
+    )
+    info = c.fetchone()
+
+    if info:
+        return info
+    else:
+        return False
+
+
+def create_application(username, job_title, graduation, start, description):
+    """Returns True if the application was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert username, password, first name, and last name into database
+            c.execute(
+                "INSERT INTO job_applications VALUES (:title, :user,:graduation,:start,:description)",
+                {
+                    "title": job_title,
+                    "user": username,
+                    "graduation": graduation,
+                    "start": start,
+                    "description": description,
+                },
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add job application into sqlite table:", error)
+        return False
+
+
+def search_application(username, job_title):
+    """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+    c.execute(
+        "SELECT * FROM job_applications WHERE user=:user AND title=:title",
+        {
+            "user": username,
+            "title": job_title,
+        },
+    )
+    info = c.fetchone()
+
+    if info:
+        return True
+    else:
+        return False
+
+
+def delete_application(username, job_title):
+    """Returns True if the application was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            c.execute(
+                "DELETE FROM job_applications WHERE user = ? AND title = ?",
+                (
+                    username,
+                    job_title,
+                ),
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete job application from the sqlite table:", error)
+        return False
+
+
+def user_made_job(first, last, job_title):
+    """checks if job belongs to user. If so, they can't apply for it"""
+    c.execute(
+        "SELECT * FROM jobs WHERE first=:first AND last=:last AND title=:title",
+        {"first": first, "last": last, "title": job_title},
+    )
+    info = c.fetchone()
+
+    if info:
+        return True
+    else:
+        return False
+
+
+def applied_jobs_list(username):
+    """Returns the info of the job title you applied for, and returns False if no information on job title is saved"""
+    c.execute(
+        "SELECT * FROM job_applications WHERE user=:user",
+        {
+            "user": username,
+        },
+    )
+    jobs = c.fetchall()
+
+    if jobs:
+        return [job[0] for job in jobs]
+    else:
+        return []
