@@ -112,6 +112,17 @@ c.execute(
 )
 
 
+c.execute(
+    """CREATE TABLE IF NOT EXISTS message (
+
+          message text ,
+          sender text,
+          receiver text,
+          new int
+          )"""
+)
+
+
 def save_job_for_user(username, saved_job_title):
     """Returns True if the job was successfully saved, False otherwise"""
     try:
@@ -831,3 +842,55 @@ def applied_jobs_list(username):
         return [job[0] for job in jobs]
     else:
         return []
+
+def create_message(message, sender, receiver, new):
+  """Returns True if the user was successfully created, False otherwise"""
+  try:
+      with conn:
+          # Insert message, sender, receiver, and new into database
+          c.execute(
+              "INSERT INTO message VALUES (:message, :sender, :receiver, :new)",
+              {
+                  "message": message,
+                  "sender": sender,
+                  "receiver": receiver,
+                  "new": new,
+                  
+              },
+          )
+      return True
+  except sqlite3.Error as error:
+      print("Failed to add user into sqlite table:", error)
+      return False
+
+
+def get_message(receiver):
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT * FROM message WHERE receiver=:receiver",
+      {
+          "receiver": receiver,
+      },
+  )
+  info = c.fetchall()
+
+  if info:
+      return [message[0] for message in info]
+  else:
+      return []
+
+
+def get_sender(receiver):
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT * FROM message WHERE receiver=:receiver",
+      {
+          "receiver": receiver,
+      },
+  )
+  info = c.fetchall()
+
+  if info:
+      return [message[1] for message in info]
+  else:
+      return []
