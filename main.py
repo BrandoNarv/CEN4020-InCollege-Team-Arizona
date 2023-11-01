@@ -25,7 +25,15 @@ FEATURES = {
     "e": "Show My Network",
     "f": "Check Pending Friend Requests",
     "g": "Display Profiles",
-    "h": "Log Out",
+    "h": "Messenger",
+    "i": "Log Out",
+}
+
+# Python "Set" Data type for MESSENGER: this is a quick variable to reference when printing out the options for messenging people.
+MESSENGER = {
+    "a": "Inbox",
+    "b": "Send Message",
+    "c": "Go back",
 }
 
 # Python "Set" Data type for Job_Options: this is a quick variable to reference when printing out the job options
@@ -272,6 +280,7 @@ def signup():
         return signup()
 
 
+
 # Function checks to see if job limit is exceeded.
 def reached_job_limit(num_jobs):
     """Check if jobs are as many as users"""
@@ -353,8 +362,91 @@ def feature_direct(feature_choice, username):
     elif feature_choice == "g":
         display_profile_navigation(username)
     elif feature_choice == "h":
+        messenger(username)
+    elif feature_choice == "i":
         logout(username)
 
+
+
+def messenger(username):
+    """Function that allows user to send messages to friends"""
+    draw_line(message="MESSENGER")
+    print("What would you like do?\n")
+
+    # Prints out features of Incollege
+    for key, value in MESSENGER.items():
+        print(f"{key}. {value}")
+
+    # prompt user to select a feature
+    messenger_choice = input(f"\nChoose one of {list(MESSENGER.keys())}: ").strip().lower()
+
+    if messenger_choice == "a":
+      inbox(username)
+      
+    elif messenger_choice == "b":
+      send_message(username)
+      
+    elif messenger_choice == "c":
+      if go_back():
+        return choose_features(username)
+
+    else:
+      if go_back():
+        return choose_features(username)
+
+
+def send_message(username):
+  
+  """Function that allows user to send messages to other users"""
+  draw_line(message="SEND MESSAGE")
+
+  print("\n")
+
+  #
+  receiver = input("Please enter the username of who you wish to send a message to: ")
+
+  if get_user(receiver) is not None:
+
+    message = input("Enter your message: ")
+    
+    # Prompt user to confirm message
+    confirm = input(f"\nAre you sure you want to send this message to {receiver}? (y/n): ").strip().lower()
+
+    # If user selects yes, have them search for the job
+    if confirm == "y":
+    # Prompt user to enter message
+        create_message(message, username, receiver,1)
+        print("\nMessage sent!\n")
+        choose_features(username)
+
+      # If you select no or other options, then prompt user to go back to feature select
+    else:
+        if go_back():
+            choose_features(username)
+
+  else:
+    print("The user doesn't exist, please try again")
+    messenger(username)
+
+
+def inbox(username):
+    """Function that allows user to view inbox"""
+    draw_line(message="INBOX")
+  
+    inbox_collection=get_message(username)
+    sender_collection=get_sender(username)
+
+    # If inbox is empty, print out a message
+    if inbox_collection is False:
+      print("Your inbox is empty")
+      choose_features(username)
+
+    # If inbox is not empty, print out the messages
+    else:
+      print("You have messages: \n")
+      for message in inbox_collection:
+        print(f"{message}\n")
+      choose_features(username)
 
 # Function designed to help user search for jobs
 def job_search(username):
@@ -1510,7 +1602,7 @@ def show_network(username):
             print(f"{name[1]}")
 
         # Prompt user if they want to remove someone
-        choice = input("Would you like to disconnect from one of these friends? (y/n):")
+        choice = input("Would you like to disconnect from one of these friends? (y/n):").strip().lower()
 
         # if yes, prompt user to enter username to remove and go back to feature select
         if choice == "y":
