@@ -111,7 +111,7 @@ def mock_try_again_input(prompt):
 
 
 def mock_features_input(prompt):
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
         return "a"
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
         return "f"
@@ -195,7 +195,8 @@ def test_features(monkeypatch, capsys):
     assert "e. Show My Network" in captured.out
     assert "f. Check Pending Friend Requests" in captured.out
     assert "g. Display Profiles" in captured.out
-    assert "h. Log Out" in captured.out
+    assert "h. Messenger" in captured.out
+    assert "i. Log Out" in captured.out
 
 
 def test_learn_skill(monkeypatch, capsys):
@@ -1216,8 +1217,8 @@ def delete_friend_request_helper(monkeypatch, capsys):
 
 # Mocks quiting the program if network has no friends
 def mock_quit_from_network_input_V1(prompt):
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
         return "Y"
@@ -1240,8 +1241,8 @@ def mock_quit_from_network_input_V3(prompt):
     if "Which user would you like to delete?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
       return "Y"
@@ -1270,8 +1271,8 @@ def mock_accept_request_input(prompt):
     if "Which user would you like to add?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
       return "Y"
@@ -1285,8 +1286,8 @@ def mock_delete_request_input(prompt):
     if "Which user would you like to reject?" in prompt:
         return "TestFriend"
 
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
       return "Y"
@@ -1534,7 +1535,7 @@ def test_find_someone_you_know():
 
 
 def mock_profile_choice_and_features_input(prompt):
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
         return "g"
     if "Choose one of ['a', 'b', 'c', 'd']:" in prompt:
         return "d"
@@ -2385,8 +2386,8 @@ def mock_job_application_success(prompt):
         return "01/02/1990"
     if "Please explain why you'd be a great fit for this job: " in prompt:
         return "I think I would be a great candidate"
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
     if "Do you want to log out (Y / N)? " in prompt:
         return "Y"
 
@@ -2397,8 +2398,8 @@ def mock_job_application_fail(prompt):
         return "a"
     if "Confirm this job and send the application? y/n?: " in prompt:
         return "y"
-    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']: " in prompt:
-        return "h"
+    if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
     if "Do you want to log out (Y / N)? " in prompt:
         return "Y"
 
