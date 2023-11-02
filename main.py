@@ -400,9 +400,53 @@ def send_message(username):
   """Function that allows user to send messages to other users"""
   draw_line(message="SEND MESSAGE")
 
-  print("\n")
+  tier = is_plus_tier(username)
 
-  #
+  if tier == 1:
+    check_users = input("\nWould you like to list all users in the system before choosing a recepient?(y/n): ").strip().lower()
+
+    if check_users == "y":
+      # Print friend list text
+      draw_line(message="User List")
+      # Check the friend list of the user
+      user_list = list_of_users(username)
+
+      # If friend list is empty, inform user that they have no friends
+      # Send user back to feature select
+      if user_list is False:
+          print("There are no users in the system to meesage! Returning to main menu \n")
+          choose_features(username)
+
+      # Else print friend list
+      else:
+          print("Here's a list of every user in the system:\n")
+          for i, name in enumerate(user_list):
+              print(name[0])
+    
+  else:
+  
+    check_friends = input("\nWould you like to list your friends before choosing a recepient?(y/n): ").strip().lower()
+  
+    if check_friends == "y":
+      # Print friend list text
+      draw_line(message="Friend List")
+      # Check the friend list of the user
+      friend_list = list_of_friends(username)
+
+      # If friend list is empty, inform user that they have no friends
+      # Send user back to feature select
+      if friend_list is False:
+          print("You have no friends! Please be aware that you can't message anyone as a standard user if you have no friends.\n")
+
+      # Else print friend list
+      else:
+          print("Here's a list of your friends:")
+          for i, name in enumerate(friend_list):
+              print(f"{name[1]}")
+
+  
+
+  print("\n")
   receiver = input("Please enter the username of who you wish to send a message to: ")
 
   if get_user(receiver) is not None:
@@ -415,10 +459,24 @@ def send_message(username):
     # If user selects yes, have them search for the job
     if confirm == "y":
     # Prompt user to enter message
-        create_message(message, username, receiver,1)
-        print("\nMessage sent!\n")
-        choose_features(username)
 
+          
+        if tier == 1 :
+          create_message(message, username, receiver,1)
+          print("\nMessage sent!\n")
+          choose_features(username)
+
+        else:
+          
+          if is_friend(username, receiver):
+            create_message(message, username, receiver,1)
+            print("\nMessage sent!\n")
+            choose_features(username)
+
+          else:
+            print("\nI'm sorry, you are not friends with that person.\n")
+            choose_features(username)
+            
       # If you select no or other options, then prompt user to go back to feature select
     else:
         if go_back():
@@ -426,7 +484,7 @@ def send_message(username):
 
   else:
     print("The user doesn't exist, please try again")
-    messenger(username)
+    choose_features(username)
 
 
 def inbox(username):
