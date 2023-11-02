@@ -894,3 +894,41 @@ def get_sender(receiver):
       return [message[1] for message in info]
   else:
       return []
+
+
+def is_plus_tier(username):
+  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  c.execute(
+      "SELECT tier FROM accounts WHERE user=:user",
+      {
+          "user": username,
+      },
+  )
+  info = c.fetchone()
+
+  if info:
+      return info[0]
+  else:
+      return False
+
+
+def is_friend(username,receiver):
+  """Returns friend username if the username already exists in the friends, False otherwise"""
+  c.execute("SELECT * FROM friends_list WHERE user=:user AND friend_user=:friend_user", {"user": username, "friend_user": receiver})
+  user_entry = c.fetchone()
+
+  if user_entry:
+      return True
+  else:
+      return False
+
+
+def list_of_users(username):
+  """Returns friend username if the username already exists in the friends, False otherwise"""
+  c.execute("SELECT user FROM accounts")
+  user_entry = c.fetchall()
+
+  if user_entry:
+      return user_entry
+  else:
+      return False
