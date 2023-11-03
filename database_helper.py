@@ -117,8 +117,18 @@ c.execute(
 
           message text ,
           sender text,
-          receiver text,
-          new int
+          receiver text
+          
+          )"""
+)
+
+c.execute(
+    """CREATE TABLE IF NOT EXISTS message_notification (
+
+          message text ,
+          sender text,
+          receiver text
+
           )"""
 )
 
@@ -843,18 +853,71 @@ def applied_jobs_list(username):
     else:
         return []
 
-def create_message(message, sender, receiver, new):
-  """Returns True if the user was successfully created, False otherwise"""
+
+
+def create_new_message(message, sender, receiver):
+  """Returns True if message was successfully created, False otherwise"""
   try:
       with conn:
           # Insert message, sender, receiver, and new into database
           c.execute(
-              "INSERT INTO message VALUES (:message, :sender, :receiver, :new)",
+              "INSERT INTO message_notification VALUES (:message, :sender, :receiver)",
               {
                   "message": message,
                   "sender": sender,
                   "receiver": receiver,
-                  "new": new,
+
+              },
+          )
+      return True
+  except sqlite3.Error as error:
+      print("Failed to add user into sqlite table:", error)
+      return False
+
+def get_new_message(receiver):
+  """Returns the info of the message you searched for, and returns False if the user has no messages for them inside of the message database"""
+  c.execute(
+      "SELECT * FROM message_notification WHERE receiver=:receiver",
+      {
+          "receiver": receiver,
+      },
+  )
+  info = c.fetchall()
+
+  if info:
+      return info
+  else:
+      return []
+
+def remove_new_message(username, receiver, message):
+  """Returns True if the application was successfully deleted, False otherwise"""
+  try:
+      with conn:
+          c.execute(
+              "DELETE FROM message_notification WHERE sender = ? AND receiver = ? AND message = ?",
+              (
+                  receiver,
+                  username,
+                  message,
+              ),
+          )
+      return True
+  except sqlite3.Error as error:
+      print("Failed to delete message from the sqlite table:", error)
+      return False
+
+
+def create_message(message, sender, receiver):
+  """Returns True if message was successfully created, False otherwise"""
+  try:
+      with conn:
+          # Insert message, sender, receiver, and new into database
+          c.execute(
+              "INSERT INTO message VALUES (:message, :sender, :receiver)",
+              {
+                  "message": message,
+                  "sender": sender,
+                  "receiver": receiver,
                   
               },
           )
@@ -865,7 +928,7 @@ def create_message(message, sender, receiver, new):
 
 
 def get_message(receiver):
-  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  """Returns the info of the message you searched for, and returns False if the user has no messages for them inside of the message database"""
   c.execute(
       "SELECT * FROM message WHERE receiver=:receiver",
       {
@@ -875,29 +938,50 @@ def get_message(receiver):
   info = c.fetchall()
 
   if info:
-      return [message[0] for message in info]
+      return info
   else:
       return []
 
 
-def get_sender(receiver):
-  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+def remove_message(username, receiver, message):
+  """Returns True if the application was successfully deleted, False otherwise"""
+  try:
+      with conn:
+          c.execute(
+              "DELETE FROM message WHERE sender = ? AND receiver = ? AND message = ?",
+              (
+                  receiver,
+                  username,
+                  message,
+              ),
+          )
+      return True
+  except sqlite3.Error as error:
+      print("Failed to delete message from the sqlite table:", error)
+      return False
+
+
+
+def get_transaction(receiver,sender):
+  """Returns where there was messaging between you and another person and returns False if no information is saved in messages. Sender in this case refers to the person the user is replying to, and receiver is the user looking into their inbox"""
   c.execute(
-      "SELECT * FROM message WHERE receiver=:receiver",
+      "SELECT * FROM message WHERE receiver=:receiver AND sender=:sender",
       {
           "receiver": receiver,
+          "sender": sender,
       },
   )
   info = c.fetchall()
 
   if info:
-      return [message[1] for message in info]
+      return True
   else:
-      return []
+      return False
+
 
 
 def is_plus_tier(username):
-  """Returns the info of the job title you searched for, and returns False if no information on job title is saved"""
+  """Returns the tier value of the account. 1 if the user is a plus tier user, 0 if the user is a standard tier user, and False if neither"""
   c.execute(
       "SELECT tier FROM accounts WHERE user=:user",
       {
@@ -913,7 +997,7 @@ def is_plus_tier(username):
 
 
 def is_friend(username,receiver):
-  """Returns friend username if the username already exists in the friends, False otherwise"""
+  """Returns True if the username and receiver of the message are friends, False otherwise"""
   c.execute("SELECT * FROM friends_list WHERE user=:user AND friend_user=:friend_user", {"user": username, "friend_user": receiver})
   user_entry = c.fetchone()
 
@@ -924,7 +1008,7 @@ def is_friend(username,receiver):
 
 
 def list_of_users(username):
-  """Returns friend username if the username already exists in the friends, False otherwise"""
+  """Returns a list of all the users in the system currently, False otherwise"""
   c.execute("SELECT user FROM accounts")
   user_entry = c.fetchall()
 
