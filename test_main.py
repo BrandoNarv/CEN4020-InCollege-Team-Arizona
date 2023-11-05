@@ -2751,3 +2751,5 @@ def test_display_applied_saved_jobs(monkeypatch, capsys):
     clean_saved_jobs_when_job_deleted("i")
     delete_job("j")
     clean_saved_jobs_when_job_deleted("j")
+
+"-----------------------------EPIC 7 Tests------------------------------------------"

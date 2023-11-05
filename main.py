@@ -466,62 +466,54 @@ def standard_messenger(username):
             for i, name in enumerate(friend_list):
                 print(f"{name[1]}")
 
-    # If user has no friends, then send them to feature select.
-    # This is because standard users can't message users who aren't their friends
-    if friend_list is False:
-        print("\nNo friends listed, unable to send messages. Returning to main menu.")
-        choose_features(username)
+    print("\n")
 
-    # Else, let them proceed with message
-    else:
-        print("\n")
+    # Prompt user for the user they want to send a message to
+    receiver = input(
+        "Please enter the username of who you wish to send a message to: "
+    )
 
-        # Prompt user for the user they want to send a message to
-        receiver = input(
-            "Please enter the username of who you wish to send a message to: "
+    # Check if the receiver is an existing user
+    # if so, proceed with message
+    if get_user(receiver) is not None:
+        # Ask user for message
+        message = input("Enter your message: ")
+
+        # Prompt user to confirm message
+        confirm = (
+            input(
+                f"\nAre you sure you want to send this message to {receiver}? (y/n): "
+            )
+            .strip()
+            .lower()
         )
 
-        # Check if the receiver is an existing user
-        # if so, proceed with message
-        if get_user(receiver) is not None:
-            # Ask user for message
-            message = input("Enter your message: ")
+        # If user selects yes, then search for the receiver in the friends table
+        if confirm == "y":
+            # If receiver is found, then add message to the message table
+            # Inform user that message has been sent
+            if is_friend(username, receiver):
+                create_message(message, username, receiver)
+                create_new_message(message, username, receiver)
+                print("\nMessage sent!\n")
+                choose_features(username)
 
-            # Prompt user to confirm message
-            confirm = (
-                input(
-                    f"\nAre you sure you want to send this message to {receiver}? (y/n): "
-                )
-                .strip()
-                .lower()
-            )
-
-            # If user selects yes, then search for the receiver in the friends table
-            if confirm == "y":
-                # If receiver is found, then add message to the message table
-                # Inform user that message has been sent
-                if is_friend(username, receiver):
-                    create_message(message, username, receiver)
-                    create_new_message(message, username, receiver)
-                    print("\nMessage sent!\n")
-                    choose_features(username)
-
-                # If receiver is not found, inform user that they are not friends
-                # Send user back to feature select
-                else:
-                    print("\nI'm sorry, you are not friends with that person.\n")
-                    choose_features(username)
-
-            # If you selects no, or other options, then prompt user to go back to feature select
+            # If receiver is not found, inform user that they are not friends
+            # Send user back to feature select
             else:
-                if go_back():
-                    choose_features(username)
+                print("\nI'm sorry, you are not friends with that person.\n")
+                choose_features(username)
 
-        # If receiver is not found, inform user that the person doesn't exist
-        # Send user back to feature select
+        # If you selects no, or other options, then prompt user to go back to feature select
         else:
-            print("The user doesn't exist, please try again")
-            choose_features(username)
+            if go_back():
+                choose_features(username)
+
+    # If receiver is not found, inform user that the person doesn't exist
+    # Send user back to feature select
+    else:
+        print("The user doesn't exist, please try again")
+        choose_features(username)
 
 
 # Function designed to send messages for the plus users
