@@ -206,7 +206,6 @@ def login():
         print("You have successfully logged in")
         global signed_in
         signed_in = True
-      
 
         return username
 
@@ -260,19 +259,25 @@ def signup():
     lastname = input("Please insert your last name: ")
     university = input("Please insert the university you are attending: ")
     major = input("Please insert your major: ")
-  
+
     # Ask the user if they wish to upgrade their into database
-    print("\nHere at Incollege, we offer the ability for accounts to be upgraded to plus tier. For $10 a month, you can message and contact all users on this site without them being on your friend's list.\n")
-    account_type = input("Would you like to upgrade your account? (Y / N): ").strip().upper()
+    print(
+        "\nHere at Incollege, we offer the ability for accounts to be upgraded to plus tier. For $10 a month, you can message and contact all users on this site without them being on your friend's list.\n"
+    )
+    account_type = (
+        input("Would you like to upgrade your account? (Y / N): ").strip().upper()
+    )
 
     if account_type == "Y":
-      print("\nYou have upgraded your account to plus tier. Thank you!\n")
-  
+        print("\nYou have upgraded your account to plus tier. Thank you!\n")
+    else:
+        print("\nYou have chosen to stay as a standard user. Thank you!\n")
+
     tier = 1 if account_type == "Y" else 0
 
     # If you can create a user with no problems, then sign up is successful
     # Sign them in, set language to english by default, and set email, SMS, and Ads
-    if create_user(username, password, firstname, lastname, university, major,tier):
+    if create_user(username, password, firstname, lastname, university, major, tier):
         print("Signup successful!")
         global signed_in
         signed_in = True
@@ -286,7 +291,6 @@ def signup():
     else:
         print("Username already exists, please try again")
         return signup()
-
 
 
 # Function checks to see if job limit is exceeded.
@@ -334,7 +338,7 @@ def choose_features(username):
     print(f"Hi {username}! What would you like do?\n")
 
     new_message_check(username)
-    
+
     # Prints out features of Incollege
     for key, value in FEATURES.items():
         print(f"{key}. {value}")
@@ -376,24 +380,25 @@ def feature_direct(feature_choice, username):
     elif feature_choice == "i":
         logout(username)
 
+
 #### EPIC 7 CHANGES START ###############################
 
-#Checks if a new message is in the user's inbox
-#Function is called from the choose_features function
+
+# Checks if a new message is in the user's inbox
+# Function is called from the choose_features function
 def new_message_check(username):
-  
     """Check if user has new messages"""
     new_messages = get_new_message(username)
 
-    #If new messages are found for the user, then message user after log in
-    #Delete them from the new message messages table
+    # If new messages are found for the user, then message user after log in
+    # Delete them from the new message messages table
     if new_messages:
-      print("You have new messages in your Messenger inbox!\n")
-      for messages in new_messages:
-        remove_new_message(username,messages[1] ,messages[0])
-        
+        print("You have new messages in your Messenger inbox!\n")
+        for messages in new_messages:
+            remove_new_message(username, messages[1], messages[0])
 
-#Function designed for messenging people and receiving messages
+
+# Function designed for messenging people and receiving messages
 def messenger(username):
     """Function that allows user to send messages to friends"""
     draw_line(message="MESSENGER")
@@ -404,181 +409,207 @@ def messenger(username):
         print(f"{key}. {value}")
 
     # prompt user to select a feature
-    messenger_choice = input(f"\nChoose one of {list(MESSENGER.keys())}: ").strip().lower()
+    messenger_choice = (
+        input(f"\nChoose one of {list(MESSENGER.keys())}: ").strip().lower()
+    )
 
-    #If user enters a, then go to inbox.
+    # If user enters a, then go to inbox.
     if messenger_choice == "a":
-      inbox(username)
+        inbox(username)
 
-    #Else if the user enters b, then go to send message
+    # Else if the user enters b, then go to send message
     elif messenger_choice == "b":
-      send_message(username)
+        send_message(username)
 
-    #Else if the user enters c, then prompt user to go back or quit
+    # Else if the user enters c, then prompt user to go back or quit
     elif messenger_choice == "c":
-      if go_back():
-        return choose_features(username)
+        if go_back():
+            return choose_features(username)
 
-    #Else prompt the user to go back or quit
+    # Else prompt the user to go back or quit
     else:
-      if go_back():
-        return choose_features(username)
+        if go_back():
+            return choose_features(username)
 
 
-#Function designed to send messages for the standard user
+# Function designed to send messages for the standard user
 def standard_messenger(username):
     """Function that allows user to send messages to friends"""
 
-    #Ask if user would like to see friends they can message
-    check_friends = input("\nWould you like to list your friends before choosing a recepient?(y/n): ").strip().lower()
+    # Ask if user would like to see friends they can message
+    check_friends = (
+        input(
+            "\nWould you like to list your friends before choosing a recepient?(y/n): "
+        )
+        .strip()
+        .lower()
+    )
 
     # Check the friend list of the user
     friend_list = list_of_friends(username)
-    
+
     # If the user wants to list their friends, then print out their friends
     if check_friends == "y":
-      
-      # Check the friend list of the user
-      friend_list = list_of_friends(username)
+        # Check the friend list of the user
+        friend_list = list_of_friends(username)
 
-      # If friend list is empty, inform user that they have no friends
-      # Send user back to feature select
-      if friend_list is False:
-          print("\nYou have no friends! Please be aware that you can't message anyone as a standard user if you have no friends.\n")
+        # If friend list is empty, inform user that they have no friends
+        # Send user back to feature select
+        if friend_list is False:
+            print(
+                "\nYou have no friends! Please be aware that you can't message anyone as a standard user if you have no friends.\n"
+            )
 
-      # Else print friend list
-      else:
-          print("\nHere's a list of your friends: \n")
-          for i, name in enumerate(friend_list):
-              print(f"{name[1]}")
+        # Else print friend list
+        else:
+            print("\nHere's a list of your friends: \n")
+            for i, name in enumerate(friend_list):
+                print(f"{name[1]}")
 
-    #If user has no friends, then send them to feature select.
-    #This is because standard users can't message users who aren't their friends
+    # If user has no friends, then send them to feature select.
+    # This is because standard users can't message users who aren't their friends
     if friend_list is False:
-      print("\nNo friends listed, unable to send messages. Returning to main menu.")
-      choose_features(username)
+        print("\nNo friends listed, unable to send messages. Returning to main menu.")
+        choose_features(username)
 
-    #Else, let them proceed with message
-    else: 
-      print("\n")
+    # Else, let them proceed with message
+    else:
+        print("\n")
 
-      #Prompt user for the user they want to send a message to
-      receiver = input("Please enter the username of who you wish to send a message to: ")
+        # Prompt user for the user they want to send a message to
+        receiver = input(
+            "Please enter the username of who you wish to send a message to: "
+        )
 
-      #Check if the receiver is an existing user
-      #if so, proceed with message
-      if get_user(receiver) is not None:
+        # Check if the receiver is an existing user
+        # if so, proceed with message
+        if get_user(receiver) is not None:
+            # Ask user for message
+            message = input("Enter your message: ")
 
+            # Prompt user to confirm message
+            confirm = (
+                input(
+                    f"\nAre you sure you want to send this message to {receiver}? (y/n): "
+                )
+                .strip()
+                .lower()
+            )
+
+            # If user selects yes, then search for the receiver in the friends table
+            if confirm == "y":
+                # If receiver is found, then add message to the message table
+                # Inform user that message has been sent
+                if is_friend(username, receiver):
+                    create_message(message, username, receiver)
+                    create_new_message(message, username, receiver)
+                    print("\nMessage sent!\n")
+                    choose_features(username)
+
+                # If receiver is not found, inform user that they are not friends
+                # Send user back to feature select
+                else:
+                    print("\nI'm sorry, you are not friends with that person.\n")
+                    choose_features(username)
+
+            # If you selects no, or other options, then prompt user to go back to feature select
+            else:
+                if go_back():
+                    choose_features(username)
+
+        # If receiver is not found, inform user that the person doesn't exist
+        # Send user back to feature select
+        else:
+            print("The user doesn't exist, please try again")
+            choose_features(username)
+
+
+# Function designed to send messages for the plus users
+def plus_messenger(username):
+    # Ask user if they want to see all the users they can message
+    check_users = (
+        input(
+            "\nWould you like to list all users in the system before choosing a recepient?(y/n): "
+        )
+        .strip()
+        .lower()
+    )
+
+    # If user wants to see all users, then print out all users
+    if check_users == "y":
+        # Print user list text
+        draw_line(message="User List")
+        # Check the friend list of the user
+        user_list = list_of_users(username)
+
+        # If friend list is empty, inform user that there are no users
+        # Send user back to feature select
+        if user_list is False:
+            print(
+                "There are no users in the system to meesage! Returning to main menu \n"
+            )
+            choose_features(username)
+
+        # Else print user list
+        else:
+            print("\nHere's a list of every user in the system:\n")
+            for i, name in enumerate(user_list):
+                print(name[0])
+
+    print("\n")
+    # Prompt user for the user they want to send a message to
+    receiver = input("Please enter the username of who you wish to send a message to: ")
+
+    # Check if the receiver is an existing user
+    # If so, proceed with message
+    if get_user(receiver) is not None:
         # Ask user for message
         message = input("Enter your message: ")
 
         # Prompt user to confirm message
-        confirm = input(f"\nAre you sure you want to send this message to {receiver}? (y/n): ").strip().lower()
+        confirm = (
+            input(
+                f"\nAre you sure you want to send this message to {receiver}? (y/n): "
+            )
+            .strip()
+            .lower()
+        )
 
-        # If user selects yes, then search for the receiver in the friends table
+        # If user selects yes, send message to user
+        # Add message as new message to the message notification table
         if confirm == "y":
-          
-            # If receiver is found, then add message to the message table
-            # Inform user that message has been sent
-            if is_friend(username, receiver):
-              create_message(message, username, receiver)
-              create_new_message(message, username, receiver)
-              print("\nMessage sent!\n")
-              choose_features(username)
-
-            # If receiver is not found, inform user that they are not friends
-            # Send user back to feature select
-            else:
-              print("\nI'm sorry, you are not friends with that person.\n")
-              choose_features(username)
-
-        # If you selects no, or other options, then prompt user to go back to feature select
-        else:
-          if go_back():
-              choose_features(username)
-      
-      # If receiver is not found, inform user that the person doesn't exist
-      # Send user back to feature select
-      else:
-        print("The user doesn't exist, please try again")
-        choose_features(username)
-
-
-#Function designed to send messages for the plus users  
-def plus_messenger(username):
-
-  # Ask user if they want to see all the users they can message
-  check_users = input("\nWould you like to list all users in the system before choosing a recepient?(y/n): ").strip().lower()
-
-  # If user wants to see all users, then print out all users
-  if check_users == "y":
-    # Print user list text
-    draw_line(message="User List")
-    # Check the friend list of the user
-    user_list = list_of_users(username)
-
-    # If friend list is empty, inform user that there are no users
-    # Send user back to feature select
-    if user_list is False:
-        print("There are no users in the system to meesage! Returning to main menu \n")
-        choose_features(username)
-
-    # Else print user list
-    else:
-        print("\nHere's a list of every user in the system:\n")
-        for i, name in enumerate(user_list):
-          print(name[0])
-
-  print("\n")
-  # Prompt user for the user they want to send a message to
-  receiver = input("Please enter the username of who you wish to send a message to: ")
-
-  # Check if the receiver is an existing user
-  # If so, proceed with message
-  if get_user(receiver) is not None:
-
-      # Ask user for message
-      message = input("Enter your message: ")
-
-      # Prompt user to confirm message
-      confirm = input(f"\nAre you sure you want to send this message to {receiver}? (y/n): ").strip().lower()
-
-      # If user selects yes, send message to user
-      # Add message as new message to the message notification table
-      if confirm == "y":
-
             create_message(message, username, receiver)
             create_new_message(message, username, receiver)
             print("\nMessage sent!\n")
             choose_features(username)
 
         # If you select no or other options, then prompt user to go back to feature select
-      else:
-          if go_back():
-              choose_features(username)
+        else:
+            if go_back():
+                choose_features(username)
 
-  # If receiver is not found, inform user that the person doesn't exist
-  else:
-      print("The user doesn't exist, please try again")
-      choose_features(username)
+    # If receiver is not found, inform user that the person doesn't exist
+    else:
+        print("The user doesn't exist, please try again")
+        choose_features(username)
 
-# Function designed to send messages by interpreting what user they are  
+
+# Function designed to send messages by interpreting what user they are
 def send_message(username):
-  
-  """Function that allows user to send messages to other users"""
-  draw_line(message="SEND MESSAGE")
+    """Function that allows user to send messages to other users"""
+    draw_line(message="SEND MESSAGE")
 
-  # See which tier the user is in
-  tier = is_plus_tier(username)
+    # See which tier the user is in
+    tier = is_plus_tier(username)
 
-  # If user is in tier 1, call the plus messenger function
-  if tier == 1:
-    plus_messenger(username)
+    # If user is in tier 1, call the plus messenger function
+    if tier == 1:
+        plus_messenger(username)
 
-  # else call the standard messenger function
-  else:
-    standard_messenger(username)
-    
+    # else call the standard messenger function
+    else:
+        standard_messenger(username)
+
 
 # Function designed to allow user to view their inbox
 def inbox(username):
@@ -586,119 +617,132 @@ def inbox(username):
     draw_line(message="INBOX")
 
     # Get inbox text
-    inbox_collection=get_message(username)
+    inbox_collection = get_message(username)
 
     # If inbox is empty, print out a message
     if not inbox_collection:
-      print("Your inbox is empty")
-      choose_features(username)
+        print("Your inbox is empty")
+        choose_features(username)
 
     # If inbox is not empty, print out the messages
     else:
-      print("You have messages: \n")
-      for message in inbox_collection:
-        print(f"From {message[1]}: {message[0]}\n")
-        
+        print("You have messages: \n")
+        for message in inbox_collection:
+            print(f"From {message[1]}: {message[0]}\n")
 
-      # Ask user what they would like to do with the messages
-      print("\nWhat would you like to do with these messages?")
-      for key, value in INBOX_OPTIONS.items():
-          print(f"{key}. {value}")
-      inbox_choice = (
-          input(f"\nChoose one of {list(INBOX_OPTIONS.keys())}: ").strip().lower()
-      )
+        # Ask user what they would like to do with the messages
+        print("\nWhat would you like to do with these messages?")
+        for key, value in INBOX_OPTIONS.items():
+            print(f"{key}. {value}")
+        inbox_choice = (
+            input(f"\nChoose one of {list(INBOX_OPTIONS.keys())}: ").strip().lower()
+        )
 
-      # If option a, reply to message
-      if inbox_choice == "a":
-          reply_message(username)
-        
-      # Else if option r, delete the message
-      elif inbox_choice == "b":
-          delete_message(username)
-        
-      # Else if option b, prompt return to the main menu or quit
-      elif inbox_choice == "c":
-          if go_back():
-              choose_features(username)
-            
-      # Else go back to the main menu
-      else:
-          if go_back():
-              choose_features(username)
+        # If option a, reply to message
+        if inbox_choice == "a":
+            reply_message(username)
 
-            
+        # Else if option r, delete the message
+        elif inbox_choice == "b":
+            delete_message(username)
+
+        # Else if option b, prompt return to the main menu or quit
+        elif inbox_choice == "c":
+            if go_back():
+                choose_features(username)
+
+        # Else go back to the main menu
+        else:
+            if go_back():
+                choose_features(username)
+
+
 # Function designed to allow user to reply to messages
 def reply_message(username):
-  """Function that allows user to reply to messages"""
-  draw_line(message="REPLY MESSAGE")
+    """Function that allows user to reply to messages"""
+    draw_line(message="REPLY MESSAGE")
 
-  # prompt user for user they wish to address
-  receiver = input("\nPlease enter the name of the user you wish to reply to: ")
+    # prompt user for user they wish to address
+    receiver = input("\nPlease enter the name of the user you wish to reply to: ")
 
-  # Check if the receiver is an existing user and that they've messaged each other
-  if get_transaction(username,receiver):
+    # Check if the receiver is an existing user and that they've messaged each other
+    if get_transaction(username, receiver):
+        # Prompt user for message
+        reply = input("\nPlease enter your reply: ")
 
-    # Prompt user for message
-    reply = input("\nPlease enter your reply: ")
-  
-    # Prompt user to confirm message
-    confirm = input(f"\nAre you sure you want to send this message to {receiver}? (y/n): ").strip().lower()
+        # Prompt user to confirm message
+        confirm = (
+            input(
+                f"\nAre you sure you want to send this message to {receiver}? (y/n): "
+            )
+            .strip()
+            .lower()
+        )
 
-    # If user selects yes, then send relpy to the user
-    # Add message as new message to the message notification table
-    if confirm == "y":
-        create_message(reply, username, receiver)
-        create_new_message(reply, username, receiver)
-        print("\nMessage sent!\n")
+        # If user selects yes, then send relpy to the user
+        # Add message as new message to the message notification table
+        if confirm == "y":
+            create_message(reply, username, receiver)
+            create_new_message(reply, username, receiver)
+            print("\nMessage sent!\n")
+            choose_features(username)
+
+        # If you select no or other options, then prompt user to go back to feature select
+        else:
+            print("\n")
+            if go_back():
+                choose_features(username)
+
+    # If receiver is not found, inform user that the person doesn't exist
+    else:
+        print(
+            "\nThe user doesn't exist, or hasn't sent a message for replying. Please try again."
+        )
         choose_features(username)
+
+
+# Function designed to allow user to delete messages
+def delete_message(username):
+    """Function that allows user to delete messages"""
+    draw_line(message="DELETE MESSAGE")
+
+    # Prompt user for user they wish to address
+    receiver = input(
+        "\nPlease enter the name of the user you wish to delete a message from: "
+    )
+
+    # Prompt user to enter the message they wish to delete
+    message = input("\nPlease enter the message you wish to delete: ")
+
+    # Confirm if user wishes to delete this message
+    confirm = (
+        input(
+            f"\nAre you sure you want to delete this message from {receiver}? (y/n): "
+        )
+        .strip()
+        .lower()
+    )
+
+    # If user selects yes, then delete the message after a check
+    if confirm == "y":
+        # If the message can be deleted, delete the message from the message notification table
+        if remove_message(username, receiver, message):
+            print("\nMessage deleted!\n")
+            choose_features(username)
+
+        # If the message can't be deleted, inform user that the message doesn't exist
+        else:
+            print("\nMessage not found. Please try again.\n")
+            choose_features(username)
 
     # If you select no or other options, then prompt user to go back to feature select
     else:
-      print("\n")
-      if go_back():
-          choose_features(username)
+        print("\n")
+        if go_back():
+            choose_features(username)
 
-  # If receiver is not found, inform user that the person doesn't exist
-  else:
-      print("\nThe user doesn't exist, or hasn't sent a message for replying. Please try again.")
-      choose_features(username)
+    #### EPIC 7 CHANGES END ###############################
 
-
-# Function designed to allow user to delete messages  
-def delete_message(username):
-  
-  """Function that allows user to delete messages"""
-  draw_line(message="DELETE MESSAGE")
-
-  # Prompt user for user they wish to address
-  receiver = input("\nPlease enter the name of the user you wish to delete a message from: ")
-
-  # Prompt user to enter the message they wish to delete
-  message = input("\nPlease enter the message you wish to delete: ")
-
-  # Confirm if user wishes to delete this message
-  confirm = input(f"\nAre you sure you want to delete this message from {receiver}? (y/n): ").strip().lower()
-
-  # If user selects yes, then delete the message after a check
-  if confirm == "y":
-
-      #If the message can be deleted, delete the message from the message notification table
-      if remove_message(username,receiver,message):
-        print("\nMessage deleted!\n")
-        choose_features(username)
-
-      # If the message can't be deleted, inform user that the message doesn't exist
-      else:
-        print("\nMessage not found. Please try again.\n")
-        choose_features(username)
-
-  # If you select no or other options, then prompt user to go back to feature select
-  else:
-    print("\n")
-    if go_back():
-        choose_features(username)
-
-  #### EPIC 7 CHANGES END ###############################
 
 # Function designed to help user search for jobs
 def job_search(username):
@@ -1854,7 +1898,11 @@ def show_network(username):
             print(f"{name[1]}")
 
         # Prompt user if they want to remove someone
-        choice = input("Would you like to disconnect from one of these friends? (y/n):").strip().lower()
+        choice = (
+            input("Would you like to disconnect from one of these friends? (y/n):")
+            .strip()
+            .lower()
+        )
 
         # if yes, prompt user to enter username to remove and go back to feature select
         if choice == "y":
