@@ -469,9 +469,7 @@ def standard_messenger(username):
     print("\n")
 
     # Prompt user for the user they want to send a message to
-    receiver = input(
-        "Please enter the username of who you wish to send a message to: "
-    )
+    receiver = input("Please enter the username of who you wish to send a message to: ")
 
     # Check if the receiver is an existing user
     # if so, proceed with message

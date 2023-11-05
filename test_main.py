@@ -269,7 +269,7 @@ def mock_signup(prompt):
     elif "Please insert your last name: " in prompt:
         return "anotherUser"
     elif "Would you like to upgrade your account? (Y / N): " in prompt:
-      return "N"
+        return "N"
 
 
 def test_signup(monkeypatch, capsys):
@@ -1245,7 +1245,7 @@ def mock_quit_from_network_input_V3(prompt):
         return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
-      return "Y"
+        return "Y"
 
 
 # Mocks sending a friend request and then quit
@@ -1275,7 +1275,7 @@ def mock_accept_request_input(prompt):
         return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
-      return "Y"
+        return "Y"
 
 
 # Mocks rejecting a friend request and then quit
@@ -1290,7 +1290,7 @@ def mock_delete_request_input(prompt):
         return "i"
 
     if "Do you want to log out (Y / N)? " in prompt:
-      return "Y"
+        return "Y"
 
 
 # Test to see if friends list returns empty and informs the user
@@ -2093,17 +2093,18 @@ def test_display_friend_invalid(monkeypatch, capsys):
 
 "///////////////////////   Epic #6   //////////////////////////////////////////////"
 
+
 def mock_signup_helper(prompt):
-  if "Enter your username: " in prompt:
-      return "mockuser"
-  elif "Enter your password: " in prompt:
-      return "ValidPass1!"
-  elif "Please insert your first name: " in prompt:
-      return "Test"
-  elif "Please insert your last name: " in prompt:
-      return "User"
-  elif "Would you like to upgrade your account? (Y / N): " in prompt:
-    return "N"
+    if "Enter your username: " in prompt:
+        return "mockuser"
+    elif "Enter your password: " in prompt:
+        return "ValidPass1!"
+    elif "Please insert your first name: " in prompt:
+        return "Test"
+    elif "Please insert your last name: " in prompt:
+        return "User"
+    elif "Would you like to upgrade your account? (Y / N): " in prompt:
+        return "N"
 
 
 # Tests to check that the system can support up to ten job listings are in lines 450 to 578
@@ -2300,7 +2301,7 @@ def test_view_all_jobs(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Asserts that the system displays all of the avaliable jobs in the system and as well as 
+    # Asserts that the system displays all of the avaliable jobs in the system and as well as
     # jobs in the system that they already applied for
     assert "\nHere are all jobs available:\n" in captured.out
     assert "[] a" in captured.out
@@ -2313,7 +2314,7 @@ def test_view_all_jobs(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-    # Asserts that the system displays all of the avaliable jobs in the system and as well as 
+    # Asserts that the system displays all of the avaliable jobs in the system and as well as
     # jobs in the system that they already applied for on the job_select function as it also
     # by default lists all of the jobs in the system
     assert "\nHere are all jobs available:\n" in captured.out
@@ -2426,7 +2427,10 @@ def test_job_application_success(monkeypatch, capsys):
     captured = capsys.readouterr()
 
     # Asserts that the user has successfully sent their application
-    assert "Application sent. We wish you luck on obtaining the position!\n" in captured.out
+    assert (
+        "Application sent. We wish you luck on obtaining the position!\n"
+        in captured.out
+    )
 
     # Calling delete_job functions for test clean up
     delete_job("a")
@@ -2462,7 +2466,10 @@ def test_job_application_fail_V1(monkeypatch, capsys):
     captured = capsys.readouterr()
 
     # Asserts that the user can't reapply for a job they already sent an application for
-    assert "\nYou have already applied to this job, and cannot resend an application." in captured.out
+    assert (
+        "\nYou have already applied to this job, and cannot resend an application."
+        in captured.out
+    )
 
     # Calling delete_job functions for test clean up
     delete_job("a")
@@ -2502,6 +2509,7 @@ def test_job_application_fail_V2(monkeypatch, capsys):
     delete_job("a")
     clean_saved_jobs_when_job_deleted("a")
     assert delete_user("mockuser") is True
+
 
 def mock_display_applied_jobs(prompt):
     # Mocks input for a user displaying list of applied jobs
@@ -2621,10 +2629,7 @@ def test_save_unsave_jobs(monkeypatch, capsys):
 
 def test_display_saved_jobs(monkeypatch, capsys):
     # Creatjng saved job  for the test
-    save_job_for_user(
-        username="testuser",
-        saved_job_title="g"
-    )
+    save_job_for_user(username="testuser", saved_job_title="g")
 
     # Mock user input for testing show_saved_jobs and job_select feature
     monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
@@ -2708,10 +2713,7 @@ def test_display_applied_saved_jobs(monkeypatch, capsys):
         description="d",
     )
 
-    save_job_for_user(
-        username="testuser",
-        saved_job_title="j"
-    )
+    save_job_for_user(username="testuser", saved_job_title="j")
 
     # Mock user input for testing logout
     monkeypatch.setattr("builtins.input", mock_display_applied_saved_jobs)
@@ -2721,7 +2723,6 @@ def test_display_applied_saved_jobs(monkeypatch, capsys):
 
     # Asserts that the system logs user out
     assert return_stm == 0
-
 
     # Mock user input for testing list_applied_jobs
     monkeypatch.setattr("builtins.input", mock_display_applied_jobs)
@@ -2752,4 +2753,244 @@ def test_display_applied_saved_jobs(monkeypatch, capsys):
     delete_job("j")
     clean_saved_jobs_when_job_deleted("j")
 
+
 "-----------------------------EPIC 7 Tests------------------------------------------"
+
+
+def mock_test_signup_premium_tier_helper(prompt):
+    if "Enter your username: " in prompt:
+        return "mockuser"
+    elif "Enter your password: " in prompt:
+        return "ValidPass1!"
+    elif "Please insert your first name: " in prompt:
+        return "Mock"
+    elif "Please insert your last name: " in prompt:
+        return "User"
+    elif "Please insert the university you are attending: " in prompt:
+        return "University of South Florida"
+    elif "Please insert your major: " in prompt:
+        return "Computer Science"
+    elif "Would you like to upgrade your account? (Y / N): " in prompt:
+        return "Y"
+
+
+def test_signup_premium_tier(monkeypatch, capsys):
+    """Mock signup function to test if user is given tier options"""
+    monkeypatch.setattr("builtins.input", mock_test_signup_premium_tier_helper)
+    signup()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert (
+        "\nHere at Incollege, we offer the ability for accounts to be upgraded to plus tier. For $10 a month, you can message and contact all users on this site without them being on your friend's list.\n"
+        in captured.out
+    )
+    assert "\nYou have upgraded your account to plus tier. Thank you!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+
+
+def mock_test_signup_free_tier_helper(prompt):
+    if "Enter your username: " in prompt:
+        return "mockuser"
+    elif "Enter your password: " in prompt:
+        return "ValidPass1!"
+    elif "Please insert your first name: " in prompt:
+        return "Mock"
+    elif "Please insert your last name: " in prompt:
+        return "User"
+    elif "Please insert the university you are attending: " in prompt:
+        return "University of South Florida"
+    elif "Please insert your major: " in prompt:
+        return "Computer Science"
+    elif "Would you like to upgrade your account? (Y / N): " in prompt:
+        return "N"
+
+
+def test_signup_free_tier(monkeypatch, capsys):
+    """Mock signup function to test if user is given tier options"""
+    monkeypatch.setattr("builtins.input", mock_test_signup_free_tier_helper)
+    signup()
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    # Assert that the expected message is printed
+    assert (
+        "\nHere at Incollege, we offer the ability for accounts to be upgraded to plus tier. For $10 a month, you can message and contact all users on this site without them being on your friend's list.\n"
+        in captured.out
+    )
+    assert "\nYou have chosen to stay as a standard user. Thank you!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+
+
+def mock_test_free_tier_messaging_with_no_friends(prompt):
+    if (
+        "\nWould you like to list your friends before choosing a recepient?(y/n): "
+        in prompt
+    ):
+        return "y"
+    elif "Please enter the username of who you wish to send a message to: " in prompt:
+        return "mockuser2"
+    elif "Enter your message: " in prompt:
+        return "Hello!"
+    elif "\nAre you sure you want to send this message to mockuser2? (y/n): " in prompt:
+        return "y"
+
+
+def test_free_tier_messaging_with_no_friends(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+
+    monkeypatch.setattr("builtins.input", mock_test_free_tier_messaging_with_no_friends)
+    monkeypatch.setattr("main.choose_features", Mock())
+    standard_messenger("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert (
+        "\nYou have no friends! Please be aware that you can't message anyone as a standard user if you have no friends.\n"
+        in captured.out
+    )
+    assert "\nI'm sorry, you are not friends with that person.\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+
+
+def mock_test_messaging_non_existing_user(prompt):
+    if (
+        "\nWould you like to list your friends before choosing a recepient?(y/n): "
+        in prompt
+    ):
+        return "y"
+    elif "Please enter the username of who you wish to send a message to: " in prompt:
+        return "mockuser2"
+
+
+def test_messaging_non_existing_user(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+
+    monkeypatch.setattr("builtins.input", mock_test_messaging_non_existing_user)
+    monkeypatch.setattr("main.choose_features", Mock())
+    standard_messenger("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "The user doesn't exist, please try again" in captured.out
+
+    assert delete_user("mockuser") is True
+
+
+def mock_test_generate_friend_list(prompt):
+    if (
+        "\nWould you like to list your friends before choosing a recepient?(y/n): "
+        in prompt
+    ):
+        return "y"
+    if "Please enter the username of who you wish to send a message to: " in prompt:
+        return "non_existing_user"
+
+
+def test_generate_friend_list(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    add_to_friend_list("mockuser", "mockuser2")
+
+    monkeypatch.setattr("builtins.input", mock_test_generate_friend_list)
+    monkeypatch.setattr("main.choose_features", Mock())
+    standard_messenger("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "\nHere's a list of your friends: \n" in captured.out
+    assert "mockuser2" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert delete_friend_from_list("mockuser", "mockuser2") is True
+
+
+def test_free_tier_messaging_with_friends(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    add_to_friend_list("mockuser", "mockuser2")
+
+    monkeypatch.setattr("builtins.input", mock_test_free_tier_messaging_with_no_friends)
+    monkeypatch.setattr("main.choose_features", Mock())
+    standard_messenger("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "\nMessage sent!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert delete_friend_from_list("mockuser", "mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True
+
+
+def test_new_message_notification(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_new_message("Hello!", "mockuser", "mockuser2")
+    create_message("Hello!", "mockuser", "mockuser2")
+
+    new_message_check("mockuser2")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "You have new messages in your Messenger inbox!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True
+
+
+def test_empty_inbox(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+
+    monkeypatch.setattr("main.choose_features", Mock())
+    inbox("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "Your inbox is empty" in captured.out
+
+    assert delete_user("mockuser") is True
+
+
+def mock_test_non_empty_inbox(prompt):
+    if "\nChoose one of ['a', 'b', 'c']:" in prompt:
+        return "c"
+    elif "Do you want to go back (Y / N)? " in prompt:
+        return "Y"
+
+
+def test_non_empty_inbox(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_message("Hello!", "mockuser", "mockuser2")
+
+    monkeypatch.setattr("builtins.input", mock_test_non_empty_inbox)
+    monkeypatch.setattr("main.choose_features", Mock())
+    inbox("mockuser2")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "You have messages: \n" in captured.out
+    assert "From mockuser: Hello!\n" in captured.out
+    assert "\nWhat would you like to do with these messages?" in captured.out
+    assert "a. Reply" in captured.out
+    assert "b. Delete" in captured.out
+    assert "c. Go Back" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True

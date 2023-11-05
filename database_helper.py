@@ -943,7 +943,7 @@ def get_message(receiver):
 
 
 def remove_message(username, receiver, message):
-    """Returns True if the application was successfully deleted, False otherwise"""
+    """Returns True if message was successfully deleted, False otherwise"""
     try:
         with conn:
             c.execute(
