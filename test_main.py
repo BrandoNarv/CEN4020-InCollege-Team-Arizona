@@ -2994,3 +2994,90 @@ def test_non_empty_inbox(monkeypatch, capsys):
     assert delete_user("mockuser") is True
     assert delete_user("mockuser2") is True
     assert remove_message("mockuser", "mockuser2", "Hello!") is True
+
+
+def mock_test_reply_message_standard(prompt):
+    if "\nPlease enter the name of the user you wish to reply to: " in prompt:
+        return "mockuser"
+    if "\nPlease enter your reply: " in prompt:
+        return "Hello! How are you?"
+    if "\nAre you sure you want to send this message to mockuser? (y/n): " in prompt:
+        return "Y"
+    if "Choose one of" in prompt:
+        return "i"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "y"
+
+
+def test_reply_message_standard(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_message("Hello!", "mockuser", "mockuser")
+
+    monkeypatch.setattr("builtins.input", mock_test_reply_message_standard)
+    reply_message("mockuser2")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "\nMessage sent!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True
+    assert remove_message("mockuser2", "mockuser", "Hello! How are you?") is True
+
+
+def test_reply_message_plus(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 1)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_message("Hello!", "mockuser", "mockuser")
+
+    monkeypatch.setattr("builtins.input", mock_test_reply_message_standard)
+    reply_message("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "\nMessage sent!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True
+    assert remove_message("mockuser2", "mockuser", "Hello! How are you?") is True
+
+
+def mock_test_plus_messenger(prompt):
+    if "\nWould you like to list all users in the system before choosing a recepient?(y/n): " in prompt:
+        return "y"
+    if "Please enter the username of who you wish to send a message to: " in prompt:
+        return "mockuser2"
+    if "Enter your message: " in prompt:
+        return "Hello! How are you?"
+    if "\nAre you sure you want to send this message to mockuser2? (y/n): " in prompt:
+        return "Y"
+    if "Choose one of" in prompt:
+        return "i"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "y"
+
+
+def test_plus_messenger(monkeypatch, capsys):
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 1)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+    create_user("mockuser3", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
+
+    #create_message("Hello!", "mockuser", "mockuser")
+
+    monkeypatch.setattr("builtins.input", mock_test_plus_messenger)
+    plus_messenger("mockuser")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "\nHere's a list of every user in the system:\n" in captured.out
+    assert "mockuser2" in captured.out
+    assert "mockuser3" in captured.out
+    assert "\nMessage sent!\n" in captured.out
+
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert delete_user("mockuser3") is True
+    assert remove_message("mockuser", "mockuser2", "Hello! How are you?") is True
