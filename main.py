@@ -168,6 +168,9 @@ email = 0
 SMS = 0
 # Target Ads is shut off by default
 target_ads = 0
+# Number of days that a student hasn't applied for a job
+# To simulate days passing, we count each login as a seperate day
+num_days_since_applied = 0
 
 # Functions ///////////////////////////////////////////////////////////////////////
 
@@ -331,13 +334,29 @@ def validate_password(input_p):
     return input_p
 
 
+# Function that are a series of notifications for the user upon login
+def notifications_on_login(username):
+    # prints a notification if more than 7 days has passed since they applied for a job
+    if num_days_since_applied > 7:
+        print(
+            "Remember - you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!"
+        )
+    # prints a notification if the user hasn't created a profile
+    if get_profile(username) is None:
+        print("Don't forget to create a profile!")
+    # helper function to check user's inbox to print out a notification if needed
+    new_message_check(username)
+
+
 # Function that acts as the main menu.
 def choose_features(username):
     """Display features and get user's choice"""
+    # First, it outputs a series of notifications if specific conditions are met
+    notifications_on_login(username)
+
+    # Then, it displays a menu full of choices that the user can select
     draw_line(message="Features")
     print(f"Hi {username}! What would you like do?\n")
-
-    new_message_check(username)
 
     # Prints out features of Incollege
     for key, value in FEATURES.items():
@@ -393,7 +412,7 @@ def new_message_check(username):
     # If new messages are found for the user, then message user after log in
     # Delete them from the new message messages table
     if new_messages:
-        print("You have new messages in your Messenger inbox!\n")
+        print("You have messages waiting for you!\n")
         for messages in new_messages:
             remove_new_message(username, messages[1], messages[0])
 
@@ -1253,6 +1272,10 @@ def send_application(username, job_title):
         # If the user's application saves successfully, inform them that their application has been sent
         if verify_apply:
             print("Application sent. We wish you luck on obtaining the position!\n")
+            # num_days_since_applied resets to 0 upon the application being saved successfully
+            # as to reset the 7 day timer for the notificaiton
+            global num_days_since_applied
+            num_days_since_applied = 0
             choose_features(username)
 
 
@@ -2692,6 +2715,12 @@ def main_helper():
     choose_features(username)
 
     print("Thank you for using InCollege!")
+
+    # using the global variable num_days_since_applied
+    # each login counts as a day that has passed since they last applied
+    global num_days_since_applied
+    num_days_since_applied += 1
+
     draw_line(message="End of Program")
     exit()
 
