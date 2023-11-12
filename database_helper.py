@@ -1016,3 +1016,17 @@ def list_of_users(username):
         return user_entry
     else:
         return False
+
+
+def get_applicants_for_job(job_title):
+    """Returns list of users who applied for the given job title"""
+
+    try:
+        with conn:
+            c.execute("SELECT user FROM job_applications WHERE title = ?", (job_title,))
+            applicants = [row[0] for row in c.fetchall()]
+            return applicants
+
+    except sqlite3.Error as error:
+        print("Failed to get applicants:", error)
+        return []
