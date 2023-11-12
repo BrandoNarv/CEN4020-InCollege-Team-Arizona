@@ -2980,7 +2980,7 @@ def test_non_empty_inbox(monkeypatch, capsys):
 
     monkeypatch.setattr("builtins.input", mock_test_non_empty_inbox)
     monkeypatch.setattr("main.choose_features", Mock())
-  
+
     inbox("mockuser2")
 
     # Capture the printed output
@@ -3010,18 +3010,18 @@ def mock_test_reply_message_standard(prompt):
         return "y"
 
 
-
 def mock_test_reply_message_plus(prompt):
-  if "\nPlease enter the name of the user you wish to reply to: " in prompt:
-      return "mockuser2"
-  if "\nPlease enter your reply: " in prompt:
-      return "Hello! How are you?"
-  if "\nAre you sure you want to send this message to mockuser2? (y/n): " in prompt:
-      return "Y"
-  if "Choose one of" in prompt:
-      return "i"
-  if "Do you want to log out (Y / N)? " in prompt:
-      return "y"
+    if "\nPlease enter the name of the user you wish to reply to: " in prompt:
+        return "mockuser2"
+    if "\nPlease enter your reply: " in prompt:
+        return "Hello! How are you?"
+    if "\nAre you sure you want to send this message to mockuser2? (y/n): " in prompt:
+        return "Y"
+    if "Choose one of" in prompt:
+        return "i"
+    if "Do you want to log out (Y / N)? " in prompt:
+        return "y"
+
 
 def test_reply_message_standard(monkeypatch, capsys):
     create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
@@ -3060,7 +3060,10 @@ def test_reply_message_plus(monkeypatch, capsys):
 
 
 def mock_test_plus_messenger(prompt):
-    if "\nWould you like to list all users in the system before choosing a recepient?(y/n): " in prompt:
+    if (
+        "\nWould you like to list all users in the system before choosing a recepient?(y/n): "
+        in prompt
+    ):
         return "y"
     if "Please enter the username of who you wish to send a message to: " in prompt:
         return "mockuser2"
@@ -3079,7 +3082,7 @@ def test_plus_messenger(monkeypatch, capsys):
     create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
     create_user("mockuser3", "ValidPass1!", "Mock", "User", "USF", "CS", 0)
 
-    #create_message("Hello!", "mockuser", "mockuser")
+    # create_message("Hello!", "mockuser", "mockuser")
 
     monkeypatch.setattr("builtins.input", mock_test_plus_messenger)
     plus_messenger("mockuser")
