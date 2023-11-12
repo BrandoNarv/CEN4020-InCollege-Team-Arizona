@@ -823,7 +823,19 @@ def delete_application(username, job_title):
         print("Failed to delete job application from the sqlite table:", error)
         return False
 
-
+def get_applicants_for_job(job_title):
+  """Returns list of users who applied for the given job title"""
+  
+  try:
+    with conn:
+      c.execute("SELECT user FROM job_applications WHERE title = ?", (job_title,))
+      applicants = [row[0] for row in c.fetchall()]
+      return applicants
+      
+  except sqlite3.Error as error:
+    print("Failed to get applicants:", error)
+    return []
+  
 def user_made_job(first, last, job_title):
     """checks if job belongs to user. If so, they can't apply for it"""
     c.execute(

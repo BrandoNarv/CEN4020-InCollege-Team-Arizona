@@ -279,6 +279,8 @@ def signup():
     # Sign them in, set language to english by default, and set email, SMS, and Ads
     if create_user(username, password, firstname, lastname, university, major, tier):
         print("Signup successful!")
+        
+        notify_new_user(username, firstname,lastname)
         global signed_in
         signed_in = True
         language = "English"
@@ -733,6 +735,35 @@ def delete_message(username):
 
     #### EPIC 7 CHANGES END ###############################
 
+def notify_applied_jobs(student_id):
+    
+    applied_jobs_count = applied_jobs_list(student_id)
+    applied_jobs_count = len(applied_jobs_count)
+    if applied_jobs_count:
+        print(f"You have currently applied for {applied_jobs_count } jobs")
+    else:
+        print("You have not applied for any jobs yet")
+def notify_new_user(username,firstname, lastname):
+  message = f"{firstname} {lastname} has joined InCollege"
+  allusers = list_of_users(username)
+  for i in allusers:
+      create_new_message(message,username,i)
+
+def notify_new_job(username, new_job_title):
+  """Notify userx that a new job has been posted"""
+  
+  message=f"A new job {new_job_title} has been posted"
+  allusers = list_of_users(username)
+  for i in allusers:
+      create_new_message(message, username, i)
+
+def notify_deleted_applied_job(username, deleted_job_title):
+  """Notify user that a job they applied to was deleted"""
+  
+  message = f"A job you applied for, {deleted_job_title}, has been deleted"
+  userlist = get_applicants_for_job(deleted_job_title)
+  for i in userlist:
+      create_new_message(message,username,i)
 
 # Function designed to help user search for jobs
 def job_search(username):
@@ -748,6 +779,7 @@ def job_search(username):
         for idx, job_title in enumerate(deleted_applied_jobs):
             print(f"{idx + 1} - {job_title}")
             delete_application(username, job_title)
+            notify_deleted_applied_job(username, job_title)
         print("\n")
 
     # Prompt and list options for job search
@@ -819,7 +851,8 @@ def job_posting(username):
     print(
         "\nJob created: Thank You for posting. We hope you'll find great employees!\n"
     )
-
+    
+    notify_new_job(username, job_title)
     # Go back to feature select by default
     choose_features(username)
 
