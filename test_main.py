@@ -2946,7 +2946,7 @@ def test_new_message_notification(monkeypatch, capsys):
 
     # Capture the printed output
     captured = capsys.readouterr()
-    assert "You have new messages in your Messenger inbox!\n" in captured.out
+    assert "You have messages waiting for you!\n" in captured.out
 
     assert delete_user("mockuser") is True
     assert delete_user("mockuser2") is True
