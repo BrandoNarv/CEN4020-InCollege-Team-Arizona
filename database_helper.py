@@ -460,45 +460,55 @@ def get_user(username):
         print("Failed to get user from sqlite table:", error)
         return None
 
+
 ## EPIC #8 PT.1 Start ########################
 def get_days(username):
-  """Returns the user information for a given username."""
-  try:
-      with conn:
-          c.execute("SELECT days FROM accounts WHERE user = :user", {"user": username})
-          user = c.fetchone()
-          if user is not None:
-              # User found, return it as a dictionary
-              return user[0]
-          else:
-              return 0
-  except sqlite3.Error as error:
-      print("Failed to get days from sqlite table:", error)
-      return 0
+    """Returns the user information for a given username."""
+    try:
+        with conn:
+            c.execute(
+                "SELECT days FROM accounts WHERE user = :user", {"user": username}
+            )
+            user = c.fetchone()
+            if user is not None:
+                # User found, return it as a dictionary
+                return user[0]
+            else:
+                return 0
+    except sqlite3.Error as error:
+        print("Failed to get days from sqlite table:", error)
+        return 0
+
 
 def reset_days(username):
-  """Returns the user information for a given username."""
-  try:
-      with conn:
-          c.execute("UPDATE accounts SET days = 0 WHERE user = :user", {"user": username})
+    """Returns the user information for a given username."""
+    try:
+        with conn:
+            c.execute(
+                "UPDATE accounts SET days = 0 WHERE user = :user", {"user": username}
+            )
 
-      return True
-    
-  except sqlite3.Error as error:
-      print("Failed to reset days from sqlite table:", error)
-      return False
+        return True
+
+    except sqlite3.Error as error:
+        print("Failed to reset days from sqlite table:", error)
+        return False
+
 
 def update_days(username):
-  """Returns the user information for a given username."""
-  try:
-      with conn:
-          c.execute("UPDATE accounts SET days = days + 1 WHERE user = :user", {"user": username})
+    """Returns the user information for a given username."""
+    try:
+        with conn:
+            c.execute(
+                "UPDATE accounts SET days = days + 1 WHERE user = :user",
+                {"user": username},
+            )
 
-      return True
+        return True
 
-  except sqlite3.Error as error:
-      print("Failed to reset days from sqlite table:", error)
-      return False
+    except sqlite3.Error as error:
+        print("Failed to reset days from sqlite table:", error)
+        return False
 
 
 ## EPIC #8 PT.2 End ########################
@@ -965,59 +975,62 @@ def remove_new_message(username, receiver, message):
 
 ## EPIC #8 Pt.2 Start ########################
 
+
 def create_notification(message, sender, receiver):
-  """Returns True if message was successfully created, False otherwise"""
-  try:
-      with conn:
-          # Insert message, sender, receiver, and new into database
-          c.execute(
-              "INSERT INTO notification VALUES (:message, :sender, :receiver)",
-              {
-                  "message": message,
-                  "sender": sender,
-                  "receiver": receiver,
-              },
-          )
-      return True
-  except sqlite3.Error as error:
-      print("Failed to add new message into sqlite table:", error)
-      return False
+    """Returns True if message was successfully created, False otherwise"""
+    try:
+        with conn:
+            # Insert message, sender, receiver, and new into database
+            c.execute(
+                "INSERT INTO notification VALUES (:message, :sender, :receiver)",
+                {
+                    "message": message,
+                    "sender": sender,
+                    "receiver": receiver,
+                },
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to add new message into sqlite table:", error)
+        return False
 
 
 def get_notification(receiver):
-  """Returns the info of the message you searched for, and returns False if the user has no messages for them inside of the message database"""
-  c.execute(
-      "SELECT * FROM notification WHERE receiver=:receiver",
-      {
-          "receiver": receiver,
-      },
-  )
-  info = c.fetchall()
+    """Returns the info of the message you searched for, and returns False if the user has no messages for them inside of the message database"""
+    c.execute(
+        "SELECT * FROM notification WHERE receiver=:receiver",
+        {
+            "receiver": receiver,
+        },
+    )
+    info = c.fetchall()
 
-  if info:
-      return info
-  else:
-      return []
+    if info:
+        return info
+    else:
+        return []
 
 
 def remove_notification(username, receiver, message):
-  """Returns True if the application was successfully deleted, False otherwise"""
-  try:
-      with conn:
-          c.execute(
-              "DELETE FROM notification WHERE sender = ? AND receiver = ? AND message = ?",
-              (
-                  receiver,
-                  username,
-                  message,
-              ),
-          )
-      return True
-  except sqlite3.Error as error:
-      print("Failed to delete new message from the sqlite table:", error)
-      return False
+    """Returns True if the application was successfully deleted, False otherwise"""
+    try:
+        with conn:
+            c.execute(
+                "DELETE FROM notification WHERE sender = ? AND receiver = ? AND message = ?",
+                (
+                    receiver,
+                    username,
+                    message,
+                ),
+            )
+        return True
+    except sqlite3.Error as error:
+        print("Failed to delete new message from the sqlite table:", error)
+        return False
+
 
 ## EPIC #8 Pt.2 END ########################
+
 
 def create_message(message, sender, receiver):
     """Returns True if message was successfully created, False otherwise"""
