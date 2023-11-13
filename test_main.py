@@ -1984,7 +1984,7 @@ def test_update_user_profile(monkeypatch, capsys):
 
 
 def test_display_user_profile(monkeypatch, capsys):
-    create_user("test", "pwd123", "Test", "User", "Test U", "CS", 0,0)
+    create_user("test", "pwd123", "Test", "User", "Test U", "CS", 0, 0)
 
     monkeypatch.setattr("builtins.input", lambda x: "Y")
 
@@ -2155,42 +2155,41 @@ def test_job_delete_success(monkeypatch, capsys):
 def mock_job_delete_notification(prompt):
     # Mock input to test for job deleted notification
     if "Would you like to delete a job? y/n: " in prompt:
-      return "y"
+        return "y"
 
     elif "Please enter the job title you want to delete: " in prompt:
-      return "a"
+        return "a"
 
     elif "Do you want to go back (Y / N)? " in prompt:
-      return "n"
+        return "n"
 
 
 def mock_job_creation_V2(prompt):
-  if "Please enter the job's title: " in prompt:
-      return "a"
-  elif "Please enter the job's description: " in prompt:
-      return "b"
-  elif "Please enter the job's employer: " in prompt:
-      return "c"
-  elif "Please enter the job's location: " in prompt:
-      return "d"
-  elif "Please enter the job's salary: " in prompt:
-      return "e"
-  elif "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
-    return "i"
+    if "Please enter the job's title: " in prompt:
+        return "a"
+    elif "Please enter the job's description: " in prompt:
+        return "b"
+    elif "Please enter the job's employer: " in prompt:
+        return "c"
+    elif "Please enter the job's location: " in prompt:
+        return "d"
+    elif "Please enter the job's salary: " in prompt:
+        return "e"
+    elif "Choose one of ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']: " in prompt:
+        return "i"
 
-  elif "Do you want to log out (Y / N)? " in prompt:
-    return "Y"
-  
+    elif "Do you want to log out (Y / N)? " in prompt:
+        return "Y"
 
 
 def test_job_delete_notification(monkeypatch, capsys):
     # Creating a job listing, job application, and deleted created job listing for the test
 
-    create_user("test", "pwd123", "f", "g", "Test U", "CS", 0,0)
+    create_user("test", "pwd123", "f", "g", "Test U", "CS", 0, 0)
 
     # Mock user input for create_job function
     monkeypatch.setattr("builtins.input", mock_job_creation_V2)
-  
+
     job_posting("test")
 
     create_application(
@@ -2201,10 +2200,9 @@ def test_job_delete_notification(monkeypatch, capsys):
         description="d",
     )
 
-  
     # Mock user input for delete job function
     monkeypatch.setattr("builtins.input", mock_job_delete_notification)
-  
+
     job_delete("test")
 
     # Mock user input for exiting choose feature function
@@ -2216,7 +2214,6 @@ def test_job_delete_notification(monkeypatch, capsys):
     # Capture the printed output
     captured = capsys.readouterr()
 
-
     # Assert that the job listing the user has chosen is deleted
     assert "A job you applied for, a, has been deleted" in captured.out
 
@@ -2224,8 +2221,6 @@ def test_job_delete_notification(monkeypatch, capsys):
     delete_application(username="testuser", job_title="a")
 
 
-
-    
 # Testing that the job_search function can now be called from the top level menu is tested
 # in lines 180 to 198 as it was tested in Epic #1 but was modified to add this feature choice
 
@@ -2343,7 +2338,7 @@ def test_view_all_jobs(monkeypatch, capsys):
 
     # Call the job_select function
     job_select("testuser")
-  
+
     # Capture the printed output
     captured = capsys.readouterr()
 
@@ -2367,8 +2362,6 @@ def test_view_all_jobs(monkeypatch, capsys):
 
     delete_user("testuser")
     delete_application("testuser", "c")
-
-    
 
 
 def mock_job_information(prompt):
@@ -2446,9 +2439,8 @@ def mock_job_application_fail(prompt):
 
 
 def test_job_application_success(monkeypatch, capsys):
-
     create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  
+
     # Creatjng job listing for the test
     create_job(
         title="a",
@@ -2470,7 +2462,7 @@ def test_job_application_success(monkeypatch, capsys):
     captured = capsys.readouterr()
 
     print("Captured Output:", captured.out)
-  
+
     # Asserts that the user has successfully sent their application
     assert (
         "Application sent. We wish you luck on obtaining the position!\n"
@@ -2487,9 +2479,8 @@ def test_job_application_success(monkeypatch, capsys):
 
 
 def test_job_application_fail_V1(monkeypatch, capsys):
-
     create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  
+
     # Creatjng job listing and application for the test
     create_job(
         title="a",
@@ -2531,7 +2522,6 @@ def test_job_application_fail_V1(monkeypatch, capsys):
 
 
 def test_job_application_fail_V2(monkeypatch, capsys):
-  
     # Creatjng job listing for the test
     create_job(
         title="a",
@@ -2603,7 +2593,6 @@ def test_display_applied_jobs(monkeypatch, capsys):
     captured = capsys.readouterr()
 
     print("Captured Output:", captured.out)
-
 
     # Asserts that the system displays all of the applied jobs in the system
     assert "\nListing all jobs you've applied for:\n" in captured.out
@@ -2738,8 +2727,6 @@ def test_display_unsaved_jobs(monkeypatch, capsys):
 
     delete_job("h")
     clean_saved_jobs_when_job_deleted("h")
-
-
 
 
 def mock_display_applied_saved_jobs(prompt):
@@ -3167,6 +3154,7 @@ def test_plus_messenger(monkeypatch, capsys):
 
 ########### EPIC #8 ###########################################################
 
+
 # Mocks quiting the program if network has no friends
 def mock_quit_from_jobs_input_V1(prompt):
     if "Choose one of ['a', 'b', 'c', 'd', 'e', 'f']:" in prompt:
@@ -3176,245 +3164,339 @@ def mock_quit_from_jobs_input_V1(prompt):
         return "N"
 
 
-#Function that test if a message warns the user to apply for jobs if they haven't applied in 7 days
+# Function that test if a message warns the user to apply for jobs if they haven't applied in 7 days
 
-#Please keep in mind that 7 days is too long for testing, so days means "log-ins" for this circumstance to allow for testing.
+
+# Please keep in mind that 7 days is too long for testing, so days means "log-ins" for this circumstance to allow for testing.
 def test_7_day_application_delay(monkeypatch, capsys):
-  create_user("mockuser9", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_user("mockuser9", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
 
-  # Log in and out multiple times
-  for _ in range(8):
-      choose_features("mockuser9")
+    # Log in and out multiple times
+    for _ in range(8):
+        choose_features("mockuser9")
 
-  # Capture the printed output
-  captured = capsys.readouterr()
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  # Print the entire captured output for inspection
-  print("Captured Output:", captured.out)
+    # Print the entire captured output for inspection
+    print("Captured Output:", captured.out)
 
-  # Now you can assert for the presence of the specific line
-  assert "Remember - you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!" in captured.out
+    # Now you can assert for the presence of the specific line
+    assert (
+        "Remember - you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!"
+        in captured.out
+    )
 
-  delete_user("mockuser9")
+    delete_user("mockuser9")
 
 
-#Function that test to make sure the warning doesn't go off if less than 7 log outs: an edge case.
+# Function that test to make sure the warning doesn't go off if less than 7 log outs: an edge case.
 
-#Please keep in mind that 7 days is too long for testing, so days means "log-ins" for this circumstance to allow for testing.
+
+# Please keep in mind that 7 days is too long for testing, so days means "log-ins" for this circumstance to allow for testing.
 def test_6_day_application_delay(monkeypatch, capsys):
-  create_user("mockuser9", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_user("mockuser9", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
 
-  # Log in and out multiple times
-  for _ in range(7):
-      choose_features("mockuser9")
+    # Log in and out multiple times
+    for _ in range(7):
+        choose_features("mockuser9")
 
-  # Capture the printed output
-  captured = capsys.readouterr()
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  # Print the entire captured output for inspection
-  print("Captured Output:", captured.out)
+    # Print the entire captured output for inspection
+    print("Captured Output:", captured.out)
 
-  # Now you can assert for the presence of the specific line
-  assert "Remember - you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!" not in captured.out
+    # Now you can assert for the presence of the specific line
+    assert (
+        "Remember - you're going to want to have a job when you graduate. Make sure that you start to apply for jobs today!"
+        not in captured.out
+    )
 
-  delete_user("mockuser9")
-
+    delete_user("mockuser9")
 
 
 # Test to see if notification will show for user who hasn't made profile
 def test_profile_notification(monkeypatch, capsys):
-  create_user("mockuser7", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_user("mockuser7", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
 
-  # Log in and out multiple times
-  
-  choose_features("mockuser7")
+    # Log in and out multiple times
 
-  # Capture the printed output
-  captured = capsys.readouterr()
+    choose_features("mockuser7")
 
-  # Print the entire captured output for inspection
-  print("Captured Output:", captured.out)
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  # Now you can assert for the presence of the specific line
-  assert "Don't forget to create a profile!" in captured.out
+    # Print the entire captured output for inspection
+    print("Captured Output:", captured.out)
 
-  delete_user("mockuser7")
+    # Now you can assert for the presence of the specific line
+    assert "Don't forget to create a profile!" in captured.out
 
+    delete_user("mockuser7")
 
 
 # Test to see if notificantion doesn't show if profile is made.
 def test_no_profile_notification(monkeypatch, capsys):
+    create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  
-  # Mock user input for create_user_profile function
-  monkeypatch.setattr("builtins.input", mock_update_user_profile)
+    # Mock user input for create_user_profile function
+    monkeypatch.setattr("builtins.input", mock_update_user_profile)
 
-  # Call the create_user_profile function
-  create_profile(
-      "testuser", "University of South Florida", "Computer Science", "", ""
-  )
-  create_education("testuser", "University of South Florida", "", 3)
-  create_experience(
-      "testuser",
-      1,
-      "Intern",
-      "Boeing",
-      "October 1st, 2020",
-      "December 30th, 2021",
-      "New York",
-      "Worked at Boeing as an intern to write a blog for their website",
-  )
+    # Call the create_user_profile function
+    create_profile(
+        "testuser", "University of South Florida", "Computer Science", "", ""
+    )
+    create_education("testuser", "University of South Florida", "", 3)
+    create_experience(
+        "testuser",
+        1,
+        "Intern",
+        "Boeing",
+        "October 1st, 2020",
+        "December 30th, 2021",
+        "New York",
+        "Worked at Boeing as an intern to write a blog for their website",
+    )
 
-  # Call the create_user_profile function
-  create_user_profile("testuser")
+    # Call the create_user_profile function
+    create_user_profile("testuser")
 
-  # Capture the printed output
-  captured = capsys.readouterr()
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  # Assert that the messages where the profile is sucessfully updated and
-  # updates and fills in the remaining sections that the student wanted to add
-  assert "Profile updated!" in captured.out
-  assert "Education updated!" in captured.out
-  assert "Experience updated!" in captured.out
-  assert "Username:  testuser" in captured.out
-  assert "Title:  1st Year Business Student" in captured.out
-  assert (
-      "About Me:  I am a first year business student that is looking for a job!"
-      in captured.out
-  )
-  assert "University:  University Of South Florida" in captured.out
-  assert "Major:  Business" in captured.out
-  assert "Degree:  Bachelors" in captured.out
-  assert "Years Attended:  1" in captured.out
+    # Assert that the messages where the profile is sucessfully updated and
+    # updates and fills in the remaining sections that the student wanted to add
+    assert "Profile updated!" in captured.out
+    assert "Education updated!" in captured.out
+    assert "Experience updated!" in captured.out
+    assert "Username:  testuser" in captured.out
+    assert "Title:  1st Year Business Student" in captured.out
+    assert (
+        "About Me:  I am a first year business student that is looking for a job!"
+        in captured.out
+    )
+    assert "University:  University Of South Florida" in captured.out
+    assert "Major:  Business" in captured.out
+    assert "Degree:  Bachelors" in captured.out
+    assert "Years Attended:  1" in captured.out
 
-  user_profile = get_profile("testuser")
-  for i, experience in enumerate(user_profile["experience"]):
-      title = experience["title"]
-      employer = experience["employer"]
-      location = experience["location"]
-      start_date = experience["date_started"]
-      end_date = experience["date_ended"]
-      description = experience["description"]
+    user_profile = get_profile("testuser")
+    for i, experience in enumerate(user_profile["experience"]):
+        title = experience["title"]
+        employer = experience["employer"]
+        location = experience["location"]
+        start_date = experience["date_started"]
+        end_date = experience["date_ended"]
+        description = experience["description"]
 
-  assert title == "Intern"
-  assert employer == "Boeing"
-  assert location == "New York"
-  assert start_date == "October 1st, 2020"
-  assert end_date == "December 30th, 2021"
-  assert (
-      description == "Worked at Boeing as an intern to write a blog for their website"
-  )
+    assert title == "Intern"
+    assert employer == "Boeing"
+    assert location == "New York"
+    assert start_date == "October 1st, 2020"
+    assert end_date == "December 30th, 2021"
+    assert (
+        description == "Worked at Boeing as an intern to write a blog for their website"
+    )
 
-  # Clean up test user profile
+    # Clean up test user profile
 
-  create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_user("testuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
 
-  # Log in and out multiple times
+    # Log in and out multiple times
 
-  choose_features("testuser")
+    choose_features("testuser")
 
-  # Capture the printed output
-  captured = capsys.readouterr()
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  # Print the entire captured output for inspection
-  print("Captured Output:", captured.out)
+    # Print the entire captured output for inspection
+    print("Captured Output:", captured.out)
 
-  # Now you can assert for the presence of the specific line
-  assert "Don't forget to create a profile!" not in captured.out
+    # Now you can assert for the presence of the specific line
+    assert "Don't forget to create a profile!" not in captured.out
 
-  delete_user("testuser")
-  delete_profile("testuser")
-  delete_education("testuser")
-  delete_experience("testuser")
+    delete_user("testuser")
+    delete_profile("testuser")
+    delete_education("testuser")
+    delete_experience("testuser")
 
 
-#Test to see if the user is notified of any new messages sent.
+# Test to see if the user is notified of any new messages sent.
 def test_message_notification(monkeypatch, capsys):
-  create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  create_new_message("Hello!", "mockuser", "mockuser2")
-  create_message("Hello!", "mockuser", "mockuser2")
+    create_user("mockuser", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_user("mockuser2", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
+    create_new_message("Hello!", "mockuser", "mockuser2")
+    create_message("Hello!", "mockuser", "mockuser2")
 
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
-  
-  choose_features("mockuser2")
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_network_input_V1)
 
-  # Capture the printed output
-  captured = capsys.readouterr()
-  assert "You have messages waiting for you!\n" in captured.out
+    choose_features("mockuser2")
 
-  assert delete_user("mockuser") is True
-  assert delete_user("mockuser2") is True
-  assert remove_message("mockuser", "mockuser2", "Hello!") is True
+    # Capture the printed output
+    captured = capsys.readouterr()
+    assert "You have messages waiting for you!\n" in captured.out
 
+    assert delete_user("mockuser") is True
+    assert delete_user("mockuser2") is True
+    assert remove_message("mockuser", "mockuser2", "Hello!") is True
 
 
 def test_no_applications_notification(monkeypatch, capsys):
+    create_user("mockuser15", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
 
-  create_user("mockuser15", "ValidPass1!", "Mock", "User", "USF", "CS", 0, 0)
-  
-  # Use monkeypatch to constantly log out the user
-  monkeypatch.setattr("builtins.input", mock_quit_from_jobs_input_V1)
-  
-  job_search("mockuser15")
-  
-  # Capture the printed output
-  captured = capsys.readouterr()
+    # Use monkeypatch to constantly log out the user
+    monkeypatch.setattr("builtins.input", mock_quit_from_jobs_input_V1)
 
+    job_search("mockuser15")
 
-  # Assert that the no applications notification triggered sucessfully.
+    # Capture the printed output
+    captured = capsys.readouterr()
 
-  assert "You have not applied for any jobs yet" in captured.out
+    # Assert that the no applications notification triggered sucessfully.
 
-  delete_user("mockuser15")
+    assert "You have not applied for any jobs yet" in captured.out
+
+    delete_user("mockuser15")
+
 
 def test_num_applications_notification(monkeypatch, capsys):
+    create_user("test", "pwd123", "f", "g", "Test U", "CS", 0, 0)
+    create_user("testuser5", "pwd123", "f", "g", "Test U", "CS", 0, 0)
 
-  create_user("test", "pwd123", "f", "g", "Test U", "CS", 0,0)
-  create_user("testuser5", "pwd123", "f", "g", "Test U", "CS", 0,0)
+    # Mock user input for create_job function
+    monkeypatch.setattr("builtins.input", mock_job_creation_V2)
 
-  # Mock user input for create_job function
-  monkeypatch.setattr("builtins.input", mock_job_creation_V2)
+    job_posting("test")
 
-  job_posting("test")
+    create_application(
+        username="testuser5",
+        job_title="a",
+        graduation="b",
+        start="c",
+        description="d",
+    )
 
-  create_application(
-    username="testuser5",
-    job_title="a",
-    graduation="b",
-    start="c",
-    description="d",
-  )
+    # Mock user input for create_job function
+    monkeypatch.setattr("builtins.input", mock_quit_from_jobs_input_V1)
 
-  # Mock user input for create_job function
-  monkeypatch.setattr("builtins.input", mock_quit_from_jobs_input_V1)
+    # Capture the output after setting up the scenario and searching for jobs
+    captured_before_search = capsys.readouterr()
+    job_search("testuser5")
 
-  # Capture the output after setting up the scenario and searching for jobs
-  captured_before_search = capsys.readouterr()
-  job_search("testuser5")
+    # Capture the output after searching for jobs
+    captured_after_search = capsys.readouterr()
 
-  # Capture the output after searching for jobs
-  captured_after_search = capsys.readouterr()
+    assert "You have currently applied for 1 job(s) total." in captured_after_search.out
 
-  assert "You have currently applied for 1 job(s) total." in captured_after_search.out
-
-  delete_user("test")
-  delete_user("testuser5")
-  delete_application("testuser5", "a")
-  delete_job("a")
+    delete_user("test")
+    delete_user("testuser5")
+    delete_application("testuser5", "a")
+    delete_job("a")
 
 
+def test_notify_new_job(monkeypatch, capsys):
+    # create a user
+    create_user("job_applicant", "ValidPass1!", "Job", "Applicant", "USF", "CS", 0, 0)
+
+    # create another user who posts a job
+    create_user("job_poster", "ValidPass1!", "Job", "Poster", "USF", "CS", 0, 0)
+
+    # post a job
+    create_job(
+        title="test job",
+        description="test job description",
+        employer="test employer",
+        location="test location",
+        salary="test salary",
+        first="Job",
+        last="Poster",
+    )
+    notify_new_job("job_poster", "test job")
+    notifications_on_login("job_applicant")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "A new job for test job has been posted" in captured.out
+
+    # clean up
+    assert delete_user("job_applicant") is True
+    assert delete_user("job_poster") is True
+    delete_job("test job") is True
+
+
+def test_notify_deleted_applied_job(monkeypatch, capsys):
+    # create a user
+    create_user("job_applicant", "ValidPass1!", "Job", "Applicant", "USF", "CS", 0, 0)
+
+    # create another user who posts a job
+    create_user("job_poster", "ValidPass1!", "Job", "Poster", "USF", "CS", 0, 0)
+
+    # post a job
+    create_job(
+        title="test job",
+        description="test job description",
+        employer="test employer",
+        location="test location",
+        salary="test salary",
+        first="Job",
+        last="Poster",
+    )
+
+    # create an application
+    create_application(
+        username="job_applicant",
+        job_title="test job",
+        graduation="May 2024",
+        start="August 2024",
+        description="overqualified",
+    )
+
+    delete_job("test job")
+    notify_deleted_applied_job("job_poster", "test job")
+    notifications_on_login("job_applicant")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "A job you applied for, test job, has been deleted" in captured.out
+
+    # clean up
+    assert delete_user("job_applicant") is True
+    assert delete_user("job_poster") is True
+    assert delete_application("job_applicant", "test job") is True
+
+
+def test_notify_new_user(monkeypatch, capsys):
+    # create a user
+    create_user("user1", "ValidPass1!", "Mock1", "User1", "USF", "CS", 0, 0)
+
+    # create another user
+    create_user("user2", "ValidPass1!", "Mock2", "User2", "USF", "CS", 0, 0)
+    notify_new_user("user2", "Mock2", "User2")
+
+    notifications_on_login("user1")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "Mock2 User2 has joined InCollege" in captured.out
+    assert get_notification("user1") == []
+
+    # clean up
+    assert delete_user("user1") is True
+    assert delete_user("user2") is True
