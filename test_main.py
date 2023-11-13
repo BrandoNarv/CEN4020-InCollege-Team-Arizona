@@ -3418,3 +3418,94 @@ def test_num_applications_notification(monkeypatch, capsys):
   delete_job("a")
 
 
+def test_notify_new_job(monkeypatch, capsys):
+    # create a user
+    create_user("job_applicant", "ValidPass1!", "Job", "Applicant", "USF", "CS", 0, 0)
+
+    # create another user who posts a job
+    create_user("job_poster", "ValidPass1!", "Job", "Poster", "USF", "CS", 0, 0)
+
+    # post a job
+    create_job(
+        title="test job",
+        description="test job description",
+        employer="test employer",
+        location="test location",
+        salary="test salary",
+        first="Job",
+        last="Poster",
+    )
+    notify_new_job("job_poster", "test job")
+    notifications_on_login("job_applicant")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "A new job for test job has been posted" in captured.out
+
+    #clean up
+    assert delete_user("job_applicant") is True
+    assert delete_user("job_poster") is True
+    delete_job("test job") is True
+
+
+def test_notify_deleted_applied_job(monkeypatch, capsys):
+    # create a user
+    create_user("job_applicant", "ValidPass1!", "Job", "Applicant", "USF", "CS", 0, 0)
+
+    # create another user who posts a job
+    create_user("job_poster", "ValidPass1!", "Job", "Poster", "USF", "CS", 0, 0)
+
+    # post a job
+    create_job(
+        title="test job",
+        description="test job description",
+        employer="test employer",
+        location="test location",
+        salary="test salary",
+        first="Job",
+        last="Poster",
+    )
+
+    # create an application
+    create_application(
+        username="job_applicant",
+        job_title="test job",
+        graduation="May 2024",
+        start="August 2024",
+        description="overqualified",
+    )
+
+    delete_job("test job")
+    notify_deleted_applied_job("job_poster", "test job")
+    notifications_on_login("job_applicant")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "A job you applied for, test job, has been deleted" in captured.out
+
+    #clean up
+    assert delete_user("job_applicant") is True
+    assert delete_user("job_poster") is True
+    assert delete_application("job_applicant", "test job") is True
+
+def test_notify_new_user(monkeypatch, capsys):
+    # create a user
+    create_user("user1", "ValidPass1!", "Mock1", "User1", "USF", "CS", 0, 0)
+
+    # create another user
+    create_user("user2", "ValidPass1!", "Mock2", "User2", "USF", "CS", 0, 0)
+    notify_new_user("user2", "Mock2", "User2")
+
+    notifications_on_login("user1")
+
+    # Capture the printed output
+    captured = capsys.readouterr()
+
+    assert "Mock2 User2 has joined InCollege" in captured.out
+    assert get_notification("user1") == []
+
+    #clean up
+    assert delete_user("user1") is True
+    assert delete_user("user2") is True
